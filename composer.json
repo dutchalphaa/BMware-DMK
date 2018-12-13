@@ -1,0 +1,25 @@
+{
+  "name": "projectbm/bmdatabase",
+  "description": "MySQLi database toolkit",
+  "type": "package",
+  "authors": [
+    {
+      "name": "Boyd",
+      "email": "Boydvree@gmail.com"
+    },
+    {
+      "name": "Mark",
+      "email": "mcholtjer@hotmail.com"
+    }
+  ],
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "config\\": "config/",
+      "access\\": "access/",
+      "migration\\": "migration/",
+      "models\\": "models/",
+      "traits\\": "traits/"
+    }
+  }
+}
