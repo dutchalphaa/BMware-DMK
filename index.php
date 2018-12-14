@@ -26,6 +26,7 @@
 require_once("vendor/autoload.php");
 
 use config\DatabaseConfig;
+use engines\SchemaCreator;
 use access\Query;
 
 $database = DatabaseConfig::create([
@@ -34,15 +35,18 @@ $database = DatabaseConfig::create([
   "password" => "",
   "useExistingDatabase" => true,
   "databaseName" => "bmbuilder_testing"
-]);
-
-$database->defineQuery(function($conn){
-  Query::start($conn, "test")
-  ->remove()
-  ->where(["ID" => 1, "value" => "jemoeder"])
-  ->endQuery();
+])->defineSchema(function(){
+  return SchemaCreator::createSchemaWithXmlFile("schema.xml");
 });
 
-//var_dump($database)
+/*
+$database->defineQuery(function($conn){
+  Query::start($conn, "test")
+  ->insert(["selectors" => ["value"], "values" => ["krijg tering"]])
+  ->endQuery();
+});
+*/
+
+var_dump($database)
 ?>
 <h1>test page for displaying the data</h1>

@@ -15,6 +15,7 @@ class DatabaseConfig
   public $password;
   public $database;
   public $databaseName = "bmbuilder_database";
+  public $newDatabaseSchema;
   public $conn;
 
   public function __construct($servername, $username, $password)
@@ -67,6 +68,7 @@ class DatabaseConfig
         $config->databaseName = $conectionVariables["databaseName"];
       }
       
+
       $config->createDatabase();
     }
 

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding="utf-8"?>
+<bmbuilder_testing>
+  <test>
+    <ID>INT(11) PRIMARY AI</ID>
+    <value>VARCHAR(255)</value>
+  </test>
+  <cookies>
+    <cookieID>INT(11) PRIMARY AI</cookieID>
+    <taste>VARCHAR(255)</taste>
+    <name>VARCHAR(255)</name>
+    <price>INT(255)</price>
+  </cookies>
+</bmbuilder_testing>

@@ -20,9 +20,10 @@ class Database
     $this->conn = $config->conn;
   }
 
-  public function useSchema()
+  public function defineSchema(callable $schema)
   {
-
+    $this->databaseSchema = $schema();
+    return $this;
   }
 
   public function defineQuery(callable $queryDefinition)
