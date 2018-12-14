@@ -84,3 +84,11 @@ the actions you define require an array to work, and depending on the action
 will look for either of these 2 properties:
 - selectors: this defines the columns you want to target
 - values: this defines the value of the column provided
+
+`Query::start()` takes 2 arguments:
+- connection: the connection variable passed down by defineQuery
+- tableName: the name(s) of the tables in the transaction
+
+`where()` takes in an array of key value pairs, where the key
+is the column name to check. and the value is the value to check
+it onn.
