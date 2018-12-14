@@ -5,13 +5,15 @@
 
 namespace config;
 
+use \access\Database;
+
 class DatabaseConfig  
 {
   private $createFunction = false;
-  private $servername;
-  private $username;
-  private $password;
-  private $database;
+  public $servername;
+  public $username;
+  public $password;
+  public $database;
   public $databaseName = "bmbuilder_database";
   public $conn;
 
@@ -68,6 +70,6 @@ class DatabaseConfig
       $config->createDatabase();
     }
 
-    return $config;
+    return new Database($config);
   }
 }

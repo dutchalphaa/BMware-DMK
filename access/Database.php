@@ -25,4 +25,8 @@ class Database
 
   }
 
+  public function defineQuery(callable $queryDefinition)
+  {
+    $queryDefinition($this->conn);
+  }
 }

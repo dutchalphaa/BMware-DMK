@@ -19,7 +19,9 @@
       "access\\": "access/",
       "migration\\": "migration/",
       "models\\": "models/",
-      "traits\\": "traits/"
+      "traits\\": "traits/",
+      "cache\\": "cache/",
+      "engines\\": "engines/"
     }
   }
 }

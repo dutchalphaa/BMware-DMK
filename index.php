@@ -26,7 +26,9 @@
 require_once("vendor/autoload.php");
 
 use config\DatabaseConfig;
-$Database = DatabaseConfig::create([
+use access\Query;
+
+$database = DatabaseConfig::create([
   "servername" => "localhost",
   "username" => "root",
   "password" => "",
@@ -34,6 +36,13 @@ $Database = DatabaseConfig::create([
   "databaseName" => "bmbuilder_testing"
 ]);
 
-var_dump($Database)
+$database->defineQuery(function($conn){
+  Query::start($conn, "test")
+  ->remove()
+  ->where(["ID" => 1, "value" => "jemoeder"])
+  ->endQuery();
+});
+
+//var_dump($database)
 ?>
 <h1>test page for displaying the data</h1>
