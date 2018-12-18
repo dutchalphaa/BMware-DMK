@@ -5,19 +5,13 @@
 
 namespace engines;
 
-use \traits\QueryCreatorHelper;
+use \helpers\QueryCreatorHelper;
+use \helpers\BaseEngine;
+use \access\Query;
 
-class QueryCreator
+class QueryCreator extends BaseEngine
 {
   use QueryCreatorHelper;
-
-  public $components;
-  public $query;
-
-  public function __construct(array $components)
-  {
-    $this->components = $components;
-  }
 
   public static function createQuery(array $queryComponents)
   {
@@ -52,7 +46,7 @@ class QueryCreator
     if(!is_array($comp["tables"])){
       array_push($stringComponents, "INSERT INTO `" . $comp["tables"] . "`");
     }
-
+    
     array_push($stringComponents, "" . $this->enclosedValues("selectors", "`"));
     array_push($stringComponents, "VALUES " . $this->enclosedValues("values", "'"));
 

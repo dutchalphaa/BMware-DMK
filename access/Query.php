@@ -6,40 +6,24 @@
 namespace access;
 
 use \engines\QueryCreator;
+use \helpers\BaseQuery;
+use \helpers\IBaseQuery;
 
-class Query
+class Query extends BaseQuery
 {
-  public $conn;
-  public $tables;
-  public $isSchema = false;
-  public $components = [];
-
-  public function __construct($conn)
+  public static function start($tables)
   {
-    $this->conn = $conn;
-  }
-
-  public static function start($conn, $tables)
-  {
-    $query = new Query($conn);
-    /*if(){
-      $query->tables = schemaobject
-      $query->isSchema = true;
-    }else {*/
+    $query = new Query();
     $query->tables = $tables;
-    //}
     return $query;
   }
 
-  public static function excecuteQuery(Query $query)
+  public static function excecuteQuery($conn, string $query)
   {
-    $result = \mysqli_query($query->conn, QueryCreator::createQuery($query->components));
+    $result = \mysqli_query($conn, $query);
 
-    $string = QueryCreator::createQuery($query->components);
-    echo "<pre>";print_r($string);echo "</pre>";
-
-    if(\mysqli_error($query->conn)){
-      throw new \Exception("Query invalid, here's what went wrong: " . \mysqli_error($query->conn));
+    if(\mysqli_error($conn)){
+      throw new \Exception("Query invalid, here's what went wrong: " . \mysqli_error($conn));
     }
     //cast into a database result object
     var_dump($result);
@@ -108,8 +92,7 @@ class Query
   public function endQuery()
   {
     $this->components["tables"] = $this->tables;
-    $result = Query::excecuteQuery($this);
-    return $result;
+    return $this;
   }
 
   public function showComponents()

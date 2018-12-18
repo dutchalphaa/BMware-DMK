@@ -7,6 +7,10 @@ namespace access;
 
 use \config\DatabaseConfig;
 use \models\DatabaseSchema;
+use \engines\MigrationCreator;
+use \engines\QueryCreator;
+use \access\Migration;
+use \access\Query;
 
 class Database
 {
@@ -20,14 +24,47 @@ class Database
     $this->conn = $config->conn;
   }
 
-  public function defineSchema(callable $schema)
+  public function define(callable $definition)
   {
-    $this->databaseSchema = $schema();
+    try {
+      $query = $definition(array($this, "modelDatabaseWithSchema"));
+    }
+    catch (\Exception $e){
+      echo $e->getMessage();
+    }
+
+    if($query instanceof Query){
+      $query = QueryCreator::createQuery($query->components);
+      //conditional logics can be excecuted here;
+      $result = Query::excecuteQuery($this->conn, $query);
+    } else if ($query instanceof Migration) {
+      $query = MigrationCreator::createQuery($query->components);
+      //conditional logics can be excecuted here;
+      $result = Migration::excecuteQuery($this->conn, $query);
+    } else if ($query instanceof DatabaseSchema){
+      $this->modelDatabaseWithSchema($query);
+    } else {
+      throw new \Exception("object given was not a query, migration or schema");
+    }
+
+    if(isset($result)){
+      if(!isset($this->databaseSchema)) {
+        \mysqli_close($this->conn);
+      }
+      return $result;
+    }
     return $this;
   }
 
-  public function defineQuery(callable $queryDefinition)
+  private function modelDatabaseWithSchema(DatabaseSchema $databaseSchema)
   {
-    $queryDefinition($this->conn);
+    $this->databaseSchema = $databaseSchema;
+    //store a copy of the old database
+
+    //do a migration for the database schema
+    
+    //update/create existing schema files
+
+    //log files migration
   }
 }

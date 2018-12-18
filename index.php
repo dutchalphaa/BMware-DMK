@@ -1,15 +1,25 @@
 <?php
 //split into different traits and classes
 
+//done for now
+
+//Database - the object representing the database your conected to
+//DatabaseQuery - the object representing the query you make
+//DatabaseSetup - the object that sets up the database and connection
+//Database/TableSchema - the objects representing their respective schema's
+
+//Query interpreter - "algorithm" that create's a SQL statement from the Query object
+//
+
+//to do
+//DatabaseMigration - the object representing the migration query
+
 //variableHelper - sets all the variables, will be called in the constructor function
 //selectionHelper - will hold all of the selector functions.
 //functionalHelper - holds all helper functions, like the database foreach(WIP) and reset function
 //exceptionHelper - holds all of the exception logic that will be passed to endQuery
-//DatabaseAccess - current class, will hold all of the base queries.
+
 //DatabaseResult - new class, that will hold all of the data for the results
-//DatabaseSetup - current setup class, holds support for initial setup of the database
-//DatabaseSchema - new class, holds the schema of the database
-//DatabaseMigration - new class, handles logic for database migrations
 //IDatabaseCustomAcess - interface for defining custom database access function
 
 //aditionally, add error handling on the database, use the exceptionHelper trait
@@ -26,7 +36,7 @@
 require_once("vendor/autoload.php");
 
 use config\DatabaseConfig;
-use engines\SchemaCreator;
+use access\Migration;
 use access\Query;
 
 $database = DatabaseConfig::create([
@@ -35,18 +45,22 @@ $database = DatabaseConfig::create([
   "password" => "",
   "useExistingDatabase" => true,
   "databaseName" => "bmbuilder_testing"
-])->defineSchema(function(){
-  return SchemaCreator::createSchemaWithXmlFile("schema.xml");
-});
+])->define(function($modelDatabase){
+  return Migration::start(["test"])
+  ->create([
+    "price" => "INT(255) NOT NULL",
+    "hello world" => "VARCHAR(255) NOT NULL"
+  ])
+  ->endQuery()
+  ->showComponents();
 
-/*
-$database->defineQuery(function($conn){
-  Query::start($conn, "test")
-  ->insert(["selectors" => ["value"], "values" => ["krijg tering"]])
+  /*
+  return Query::start("test")
+  ->insert(["selectors" => ["value"], "values" => ["hello world from the other side"]])
   ->endQuery();
+  */
 });
-*/
 
-var_dump($database)
+
 ?>
 <h1>test page for displaying the data</h1>

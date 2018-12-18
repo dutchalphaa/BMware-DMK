@@ -19,7 +19,7 @@
       "access\\": "access/",
       "migration\\": "migration/",
       "models\\": "models/",
-      "traits\\": "traits/",
+      "helpers\\": "helpers/",
       "cache\\": "cache/",
       "engines\\": "engines/"
     }

@@ -6,6 +6,7 @@
 namespace engines;
 
 use \models\DatabaseSchema;
+use \models\TableSchema;
 
 class SchemaCreator 
 {
@@ -17,14 +18,17 @@ class SchemaCreator
 
   }
 
-  public function createDatabaseSchemaObject()
+  public function createDatabaseSchemaObject($location)
   {
-    $tables = [];
+    $table = [];
+    $tableSchemas = [];
     $primaryKeys = [];
 
     foreach($this->schema as $table => $content){
       //create database objects
       $tables[$table] = $content;
+      $tableSchemas[$table] = new TableSchema($content);
+      
       foreach ($this->schema[$table] as $key => $value) {
         if(strpos($value, "PRIMARY")){
           $primaryKeys[$table] = $key;
@@ -32,7 +36,7 @@ class SchemaCreator
       }
     }
 
-    $this->schemaObject = new DatabaseSchema($tables, $primaryKeys);
+    $this->schemaObject = new DatabaseSchema($tableSchemas, $primaryKeys, $location);
     return $this->schemaObject;
   }
 
@@ -44,6 +48,6 @@ class SchemaCreator
       throw new \Exception("Error loading file");
     }
 
-    return $schema->createDatabaseSchemaObject();
+    return $schema->createDatabaseSchemaObject($location);
   }
 }

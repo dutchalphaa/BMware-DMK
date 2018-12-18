@@ -3,7 +3,7 @@
  * @package BmBuilder
  */
 
-namespace traits;
+namespace helpers;
 
 /**
  * trait that holds function for the query class
@@ -12,7 +12,7 @@ trait QueryCreatorHelper
 {
   private function enclosedValues(string $comp, string $delimiter/* choose a better name for this variable */)
   {
-    $enclosedValues = "(";   
+    $enclosedValues = "(";
     for ($i=0; $i < \count($this->components[$comp]); $i++) { 
       if($i != \count($this->components[$comp]) - 1){
         $enclosedValues .= " ". $delimiter . $this->components[$comp][$i]. $delimiter . ",";
