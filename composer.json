@@ -1,18 +1,17 @@
 {
-  "name": "projectbm/bmdatabase",
+  "name": "BMware/DMK",
   "description": "MySQLi database toolkit",
   "type": "package",
+  "license": "GPL-3.0",
   "authors": [
     {
       "name": "Boyd",
       "email": "Boydvree@gmail.com"
-    },
-    {
-      "name": "Mark",
-      "email": "mcholtjer@hotmail.com"
     }
   ],
-  "require": {},
+  "require": {
+    "php": ">=7"
+  },
   "autoload": {
     "psr-4": {
       "config\\": "config/",

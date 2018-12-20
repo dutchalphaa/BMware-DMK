@@ -1,6 +1,6 @@
 <?php
 /**
- * @package BmBuilder
+ * @package BMware DMK
  */
 
 namespace config;

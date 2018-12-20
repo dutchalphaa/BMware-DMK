@@ -1,6 +1,6 @@
 <?php
 /**
- * @package BmEstore
+ * @package BMware DMK
  */
 
 namespace engines;
