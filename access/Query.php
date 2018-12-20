@@ -5,7 +5,6 @@
 
 namespace access;
 
-use \engines\QueryCreator;
 use \helpers\BaseQuery;
 use \helpers\IBaseQuery;
 
@@ -16,17 +15,6 @@ class Query extends BaseQuery
     $query = new Query();
     $query->tables = $tables;
     return $query;
-  }
-
-  public static function excecuteQuery($conn, string $query)
-  {
-    $result = \mysqli_query($conn, $query);
-
-    if(\mysqli_error($conn)){
-      throw new \Exception("Query invalid, here's what went wrong: " . \mysqli_error($conn));
-    }
-    //cast into a database result object
-    var_dump($result);
   }
 
   //some sql helpers

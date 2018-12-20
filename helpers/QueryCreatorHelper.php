@@ -24,16 +24,38 @@ trait QueryCreatorHelper
     return $enclosedValues;
   }
 
-  private function mutlipleValues(string $comp)
+  private function mutlipleValues(string $comp, bool $drop = false)
   {
+    $delimiter = "";
+    if($drop){
+      $delimiter = "DROP ";
+    }
+    
     $multipleValues = "";   
     for ($i=0; $i < \count($this->components[$comp]); $i++) { 
       if($i != \count($this->components[$comp]) - 1){
-        $multipleValues .= " " . $this->components[$comp][$i] . ",";
+        $multipleValues .= "$delimiter" . $this->components[$comp][$i] . ", ";
       }else {
-        $multipleValues .= " " . $this->components[$comp][$i];
+        $multipleValues .= "$delimiter" . $this->components[$comp][$i];
       }
     }
+    return $multipleValues;
+  }
+
+  private function createTableSelectors(string $comp, bool $enclosed = false)
+  {
+    $multipleValues = "(";
+    foreach ($this->components[$comp] as $key => $value) {
+      if($key == "PRIMARY"){
+        $multipleValues .= "PRIMARY KEY ($value)";
+      } else if ($key == key(array_slice($this->components[$comp], -1, 1, true))) {
+        throw new \Exception("no primary key was given");
+      } else {
+        $multipleValues .= "`". $key . "` " . $value . ", ";
+      }
+      
+    }
+    $multipleValues .= ")";
     return $multipleValues;
   }
 

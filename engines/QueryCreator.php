@@ -33,7 +33,7 @@ class QueryCreator extends BaseEngine
       
       case "delete":
         $createQuery = new QueryCreator($queryComponents);
-        $createQuery->del();
+        $createQuery->remove();
         return $createQuery->query;
     }
   }
@@ -86,11 +86,10 @@ class QueryCreator extends BaseEngine
       array_push($stringComponents, $this->whereStatements());
     }
 
-    //echo "<pre>";print_r($stringComponents);echo "</pre>";
     $this->query = \implode(" ", $stringComponents);
   }
 
-  private function del()
+  private function remove()
   {
     $stringComponents = [];
     $comp = $this->components;

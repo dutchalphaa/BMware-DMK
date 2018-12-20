@@ -5,35 +5,23 @@
 
 namespace access;
 
-//use \engine\MigrationCreator;
 use \models\DatabaseSchema;
 use \helpers\BaseQuery;
 use \helpers\IBaseQuery;
 
 class Migration extends BaseQuery
 {
-  public function __construct(array $tables)
+  public function __construct(array $tables, DatabaseSchema $schema)
   {
-    //parent::__construct();
     $this->tables = $tables;
+    $this->schema = $schema;
   }
 
-  public static function start(array $tables)
+  public static function start(array $tables, DatabaseSchema $schema)
   {
-    $migration = new Migration($tables);
+    $migration = new Migration($tables, $schema);
 
     return $migration;
-  }
-
-  public static function excecuteQuery($conn, string $query)
-  {
-    $result = \mysqli_query($conn, $query);
-
-    if(\mysqli_error($conn)){
-      throw new \Exception("Query invalid, here's what went wrong: " . \mysqli_error($conn));
-    }
-    //cast into a database result object
-    var_dump($result);
   }
 
   public function create(array $toCreate)
@@ -44,19 +32,23 @@ class Migration extends BaseQuery
     return $this;
   }
 
-  public function alter(array $toAlter)
+  public function alter(array $toAlter = [])
   {
     $this->components["action"] = "update";
-    $this->components["selectors"] = $toAlter["selectors"];
-    $this->components["values"] = $toAlter["values"];
+    if(!empty($toAlter["selectors"]) && $toAlter["values"]){
+      $this->components["selectors"] = $toAlter["selectors"];
+      $this->components["values"] = $toAlter["values"];
+    } else if (!empty($toAlter["values"])) {
+      $this->components["values"] = $toAlter["values"];
+    }
 
     return $this;
   }
 
-  public function drop(string $array)
+  public function drop(array $selectors = [])
   {
-    $this->components["action"] = "drop";
-    $this->components["selectors"] = $toDrop; 
+    $this->components["action"] = "delete";
+    $this->components["selectors"] = $selectors;
 
     return $this;
   }

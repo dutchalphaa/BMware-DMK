@@ -9,13 +9,15 @@ class TableSchema
 {
   public $fields;
   public $primaryKey;
+  public $name;
 
-  public function __construct($fields)
+  public function __construct($name, $fields)
   {
+    $this->name = $name;
     $this->fields = $fields;
     foreach ($fields as $key => $value) {
-      if(strpos($value, "PRIMARY")){
-        $this->primaryKey = $key;
+      if(strpos($key, "primary") !== false) {
+        $this->primaryKey = $value;
       }
     }
   }

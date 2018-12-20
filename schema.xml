@@ -1,13 +1,16 @@
 <?xml version='1.0' encoding="utf-8"?>
 <bmbuilder_testing>
   <test>
-    <ID>INT(11) PRIMARY AI</ID>
+    <ID>INT(11) AUTO_INCREMENT</ID>
     <value>VARCHAR(255)</value>
+    <email>VARCHAR(255)</email>
+    <primary>ID</primary>
   </test>
   <cookies>
-    <cookieID>INT(11) PRIMARY AI</cookieID>
+    <cookieID>INT(11) AUTO_INCREMENT</cookieID>
     <taste>VARCHAR(255)</taste>
     <name>VARCHAR(255)</name>
     <price>INT(255)</price>
+    <primary>cookieID</primary>
   </cookies>
 </bmbuilder_testing>

@@ -9,13 +9,11 @@ use \access\Database;
 
 class DatabaseConfig  
 {
+  public $databaseName = "bmbuilder_database";
   private $createFunction = false;
   public $servername;
   public $username;
   public $password;
-  public $database;
-  public $databaseName = "bmbuilder_database";
-  public $newDatabaseSchema;
   public $conn;
 
   public function __construct($servername, $username, $password)
@@ -28,7 +26,7 @@ class DatabaseConfig
   public function createDatabase()
   {
     $this->connect(true);
-    if (\mysqli_query($this->conn, "CREATE DATABASE $this->databaseName") != true) {
+    if (\mysqli_query($this->conn, "CREATE DATABASE IF NOT EXISTS $this->databaseName") != true) {
         throw new \Exception("Error creating database: " . \mysqli_error($this->conn));
     } 
     \mysqli_close($this->conn);

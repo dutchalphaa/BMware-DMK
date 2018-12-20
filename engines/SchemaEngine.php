@@ -8,7 +8,7 @@ namespace engines;
 use \models\DatabaseSchema;
 use \models\TableSchema;
 
-class SchemaCreator 
+class SchemaEngine 
 {
   public $schema;
   public $schemaObject;
@@ -27,11 +27,11 @@ class SchemaCreator
     foreach($this->schema as $table => $content){
       //create database objects
       $tables[$table] = $content;
-      $tableSchemas[$table] = new TableSchema($content);
+      $tableSchemas[$table] = new TableSchema($table, $content);
       
       foreach ($this->schema[$table] as $key => $value) {
-        if(strpos($value, "PRIMARY")){
-          $primaryKeys[$table] = $key;
+        if(strpos($key, "primary") !== false){
+          $primaryKeys[$table] = $value;
         }
       }
     }
@@ -42,7 +42,7 @@ class SchemaCreator
 
   public static function createSchemaWithXmlFile($location)
   {
-    $schema = new SchemaCreator();
+    $schema = new SchemaEngine();
     $schema->schema = \json_decode(\json_encode(\simplexml_load_file($location)), true);
     if($schema->schema == null){
       throw new \Exception("Error loading file");

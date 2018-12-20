@@ -5,14 +5,14 @@
 
 //Database - the object representing the database your conected to
 //DatabaseQuery - the object representing the query you make
+//DatabaseMigration - the object representing the migration query
 //DatabaseSetup - the object that sets up the database and connection
 //Database/TableSchema - the objects representing their respective schema's
 
-//Query interpreter - "algorithm" that create's a SQL statement from the Query object
-//
+//Query interpreter - "algorythm" that create's a SQL statement from the Query object
 
 //to do
-//DatabaseMigration - the object representing the migration query
+//Migration interpreter = "algorythm" that create's the SQL statement from the Migration object and excecutes the neccisairy steps for a migration
 
 //variableHelper - sets all the variables, will be called in the constructor function
 //selectionHelper - will hold all of the selector functions.
@@ -31,7 +31,8 @@
 //try to make join statements easier to create
 //try to make generic crud statements with easy building
 //easy prepared statements
-//make a software out of this that manages your db for you in js
+//make a software out of this that manages your db for you.
+
 
 require_once("vendor/autoload.php");
 
@@ -45,22 +46,14 @@ $database = DatabaseConfig::create([
   "password" => "",
   "useExistingDatabase" => true,
   "databaseName" => "bmbuilder_testing"
-])->define(function($modelDatabase){
-  return Migration::start(["test"])
-  ->create([
-    "price" => "INT(255) NOT NULL",
-    "hello world" => "VARCHAR(255) NOT NULL"
-  ])
-  ->endQuery()
-  ->showComponents();
-
-  /*
-  return Query::start("test")
-  ->insert(["selectors" => ["value"], "values" => ["hello world from the other side"]])
-  ->endQuery();
-  */
+])->define(function($database){
+  $database("modelDatabaseWithSchema", "schema.xml");
 });
 
+
+$database->define(function($database){
+  
+});
 
 ?>
 <h1>test page for displaying the data</h1>
