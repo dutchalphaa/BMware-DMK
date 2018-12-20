@@ -46,13 +46,20 @@ $database = DatabaseConfig::create([
   "password" => "",
   "useExistingDatabase" => true,
   "databaseName" => "bmbuilder_testing"
-])->define(function($database){
-  $database("modelDatabaseWithSchema", "schema.xml");
+])->define(function($context){
+  $context("modelDatabaseWithSchema", "schema.xml");
 });
 
 
-$database->define(function($database){
-  
+$database->define(function($context){
+  return Migration::start(["start"], $context("databaseSchema"))
+  ->create([
+    "ID" => "INT(255) NOT NULL AUTO_INCREMENT",
+    "email" => "VARCHAR(255) NOT NULL",
+    "created at" => "DATETIME DEFAULT CURRENT_TIMESTAMP",
+    "PRIMARY" => "ID"
+  ])
+  ->endQuery();
 });
 
 ?>

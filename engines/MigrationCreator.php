@@ -85,7 +85,7 @@ class MigrationCreator extends BaseEngine
     //} else {
       //throw new \Exception("Field or table does not exist in the database. make sure that the fields you try to update exist in the schema")
     //}
-    echo "<pre>";print_r($stringComponents);echo "</pre>";
+    //echo "<pre>";print_r($stringComponents);echo "</pre>";
     $this->query = \implode(" ", $stringComponents);
     //update the schema
   }

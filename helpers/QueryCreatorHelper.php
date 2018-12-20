@@ -46,6 +46,7 @@ trait QueryCreatorHelper
   {
     $multipleValues = "(";
     foreach ($this->components[$comp] as $key => $value) {
+      
       if($key == "PRIMARY"){
         $multipleValues .= "PRIMARY KEY ($value)";
       } else if ($key == key(array_slice($this->components[$comp], -1, 1, true))) {
