@@ -9,8 +9,8 @@ use \access\Database;
 
 class DatabaseConfig  
 {
-  public $databaseName = "bmbuilder_database";
   private $createFunction = false;
+  public $databaseName = "bmbuilder_database";
   public $servername;
   public $username;
   public $password;

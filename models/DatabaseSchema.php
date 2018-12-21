@@ -7,15 +7,16 @@ namespace models;
 
 class DatabaseSchema
 {
-  public $tables;
+  public $schemaFile = "none";
+  public $databaseName;
   public $primaryKeys;
-  public $schemaFile;
+  public $tables;
 
-  public function __construct($tables, $primaryKeys, string $location )
+  public function __construct($tables, $primaryKeys, $databaseName)
   {
     $this->tables = $tables;
     $this->primaryKeys = $primaryKeys;
-    $this->schemaFile = $location;
+    $this->databaseName = $databaseName;
   }
 
   public function tableCount()

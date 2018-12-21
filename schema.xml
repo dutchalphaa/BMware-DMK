@@ -1,16 +1,9 @@
-<?xml version='1.0' encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <bmbuilder_testing>
-  <test>
-    <ID>INT(11) AUTO_INCREMENT</ID>
-    <value>VARCHAR(255)</value>
-    <email>VARCHAR(255)</email>
-    <primary>ID</primary>
-  </test>
-  <cookies>
-    <cookieID>INT(11) AUTO_INCREMENT</cookieID>
-    <taste>VARCHAR(255)</taste>
-    <name>VARCHAR(255)</name>
-    <price>INT(255)</price>
-    <primary>cookieID</primary>
-  </cookies>
+  <user>
+    <ID>INT(255) NOT NULL AUTO_INCREMENT</ID>
+    <e_mail>VARCHAR(822)</e_mail>
+    <created_at>DATETIME DEFAULT CURRENT_TIMESTAMP</created_at>
+    <PRIMARY>ID</PRIMARY>
+  </user>
 </bmbuilder_testing>

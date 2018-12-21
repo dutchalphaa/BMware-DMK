@@ -25,18 +25,16 @@
 //aditionally, add error handling on the database, use the exceptionHelper trait
 //to set internal exception, and have the endQuery statement deal with it.
 //lastly, this might be a cool package to distribute to classmates or something like that.
-//although it needs to be refactored to fit within a normal database space.
-//for custom module, also include a custom query function. that possibly adhere's to the selectors
 
 //try to make join statements easier to create
 //try to make generic crud statements with easy building
 //easy prepared statements
 //make a software out of this that manages your db for you.
 
-
 require_once("vendor/autoload.php");
 
 use config\DatabaseConfig;
+use engines\SchemaEngine;
 use access\Migration;
 use access\Query;
 
@@ -50,17 +48,23 @@ $database = DatabaseConfig::create([
   $context("modelDatabaseWithSchema", "schema.xml");
 });
 
-
 $database->define(function($context){
-  return Migration::start(["start"], $context("databaseSchema"))
-  ->create([
-    "ID" => "INT(255) NOT NULL AUTO_INCREMENT",
-    "email" => "VARCHAR(255) NOT NULL",
-    "created at" => "DATETIME DEFAULT CURRENT_TIMESTAMP",
-    "PRIMARY" => "ID"
+  // SchemaEngine::createXmlFileWithSchema("realSchema.xml", $context("databaseSchema"));
+  return Migration::start(["user"], $context("databaseSchema"))
+  ->alter([
+    "selectors" => "email",
+    "values" => ["e_mail" => "VARCHAR(822)"]
   ])
   ->endQuery();
+
 });
+
+$database->define(function($context){
+  echo "<pre>"; var_dump($context("databaseSchema")); echo "</pre>";
+});
+
+// echo "<pre>";var_dump($database);echo "</pre>";
+
 
 ?>
 <h1>test page for displaying the data</h1>

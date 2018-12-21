@@ -59,11 +59,4 @@ class Migration extends BaseQuery
 
     return $this;
   }
-
-  public function showComponents()
-  {
-    echo "<pre>";print_r($this->components);echo "</pre>";
-
-    return $this;
-  }
 }

@@ -82,12 +82,4 @@ class Query extends BaseQuery
     $this->components["tables"] = $this->tables;
     return $this;
   }
-
-  public function showComponents()
-  {
-    //this function is only for testing purposes
-    $this->components["tables"] = $this->tables;
-
-    echo "<pre>";print_r($this->components);echo "</pre>";
-  }
 }

@@ -16,15 +16,15 @@ use \access\Query;
 final class Database
 {
   private $databaseSchema;
-  private $config;
+  private $databaseName;
   private $conn;
   private $access = false;
 
 
   public function __construct(DatabaseConfig $config)
   {
-    $this->config = $config;
     $this->conn = $config->conn;
+    $this->databaseName = $config->databaseName;
   }
 
   public function getAccess($toAccess, $arg = null)
@@ -53,13 +53,15 @@ final class Database
     }
 
     if($query instanceof Query){
-      $query = QueryCreator::createQuery($query->components);
       //conditional logics can be excecuted here;
+      
+      $query = QueryCreator::createQuery($query->components);
       $result = $this->excecuteQuery($query);
     } else if ($query instanceof Migration) {
-      $query = MigrationCreator::createQuery($query->components);
+      SchemaEngine::updateSchemaWithMigration($query, $this->databaseSchema);
 
       //conditional logics can be excecuted here;
+      $query = MigrationCreator::createQuery($query->components);
       $result = $this->excecuteQuery($query);
     } else if ($query instanceof DatabaseSchema){
       $this->modelDatabaseWithSchema($query);
@@ -85,7 +87,7 @@ final class Database
     if($databaseSchema instanceof DatabaseSchema) {
       $this->databaseSchema = $databaseSchema;
     } else if(is_string($databaseSchema)) {
-      $this->databaseSchema = SchemaEngine::createSchemaWithXmlFile($databaseSchema);
+      $this->databaseSchema = SchemaEngine::createSchemaWithXmlFile($databaseSchema, $this->databaseName);
     } else {
       throw new \Exception("this function expects a xml schema file location or a schema object");
     }
