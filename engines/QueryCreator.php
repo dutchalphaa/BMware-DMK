@@ -68,10 +68,10 @@ class QueryCreator extends BaseEngine
       array_push($stringComponents, "INSERT INTO `" . $comp["tables"] . "`");
     }
     
-    array_push($stringComponents, "" . $this->enclosedValues("selectors", "`"));
+    array_push($stringComponents, $this->enclosedValues("selectors", "`"));
     array_push($stringComponents, "VALUES " . $this->enclosedValues("values", "'"));
 
-    $this->query = \implode("", $stringComponents);
+    $this->query = \implode(" ", $stringComponents);
   }
 
   /**
