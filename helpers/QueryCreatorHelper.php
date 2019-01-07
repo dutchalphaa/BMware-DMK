@@ -6,7 +6,7 @@
 namespace helpers;
 
 /**
- * trait that holds function for the query class
+ * trait that holds function for the creation of the sql string
  */
 trait QueryCreatorHelper
 {

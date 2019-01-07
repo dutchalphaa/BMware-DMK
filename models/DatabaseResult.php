@@ -5,6 +5,9 @@
 
 namespace models;
 
+/**
+ * class that holds the results for a query, and some access modifiers
+ */
 class DatabaseResult
 {
   public $numRows;

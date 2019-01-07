@@ -2,8 +2,11 @@
 <bmbuilder_testing>
   <user>
     <ID>INT(255) NOT NULL AUTO_INCREMENT</ID>
-    <e_mail>VARCHAR(822)</e_mail>
+    <email>VARCHAR(20)</email>
     <created_at>DATETIME DEFAULT CURRENT_TIMESTAMP</created_at>
     <PRIMARY>ID</PRIMARY>
   </user>
+  <users>
+    <email>VARCHAR(20)</email>
+  </users>
 </bmbuilder_testing>

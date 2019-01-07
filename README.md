@@ -21,7 +21,7 @@ $database = DatabaseConfig::create([
 });
 ```
 
-`DatabaseConfig::create()` takes in and array of arguments.
+`DatabaseConfig::create()` takes in an array of arguments.
 
 - servername: the base url to you local/test/production/ site
 - username: the username of the database
@@ -30,11 +30,13 @@ $database = DatabaseConfig::create([
 - databaseName: the name of the database that you want to use, if useExistingDatabase is false
   this becomes the name of the new database. Leave empty to use the default database name: bmbuilder_testing
 
-the define function here is called to set up the initial schema for the database, this is done to unlock migrations. Right from the start
+the define function is called to set up the initial schema for the database, this is done to unlock migrations. Right from the start, however this is optional
 
 ---
 
-there are currently 4 query statements prebuild with this library:
+### Queries
+
+there are currently 4 query actions prebuild with this library:
 
 - create
 
@@ -90,7 +92,7 @@ $database->define(function($context){
 _note that delete is a reserved word in php so I used remove instead_
 
 the actions you define require an array to work, and depending on the action
-will look for either of these 2 properties:
+will look for either of these 2 indexes:
 
 - selectors: this defines the columns you want to target
 - values: this defines the value of the column provided
@@ -100,8 +102,7 @@ will look for either of these 2 properties:
 - tableName: the name(s) of the tables in the transaction
 
 `where()` takes in an array of key value pairs, where the key
-is the column name to check. and the value is the value to check
-it onn.
+is the column name to check. and the value is the value to validate for that field.
 
 aditionally, a custom query can be made in the following way
 
@@ -114,6 +115,8 @@ $database->define(function($context){
 _note that when using the Query object you need to return it, but not when using a custom query(yet)_
 
 ---
+
+### Migrations
 
 similar to the Query object, migrations also have their own object. a simple migration example looks the following.
 
@@ -217,25 +220,26 @@ $database->define(function($context){
 
 In my eyes, what makes this library "good" is that the query definitions are done in functions. meaning that you can let your programming spirit loose on it, and set up all kind of conditional checks on for example the schema. before the query is even excecuted this means that you can do just about everything before the query is excecuted.
 
-Also, something that i want to work on in the near future, Which probably wont be worked on in a while because that part of the lib wont be usefull for my work, is adding support for json structured queries. seeing as the calls are stored in a query object before even passing down to the decoder anyway. this will allow for sharing and/or making query templates. which in my eyes seems like an aweome feature.
+Also, something that i want to work on in the near future, Which probably wont be worked on in a while because that part of the lib wont be usefull for my work, is adding support for json structured queries. seeing as the calls are stored in a query object before even passing down to the decoder anyway. this will allow for sharing and/or making query templates. which in my eyes seems like an awesome feature.
 
 # Planning
 
 this is a list of things that I want to add
 
-1. SchemaEngine, this wil cointain functionality like: create from existing database, update on migration and create alongside database
-2. Cacheing, flagged queries can be cached in (potentially) session to make repetative calls quicker
-3. DatabaseResult class, custom result class with modifiers that let's you easily access certain sets of the data, and call functions on collections.
+1. Wordpress config and database class, custom config class that skipps the unnecesary setup steps and a custom database class that will redefine how the queries are made.
+2. DatabaseResult class, custom result class with modifiers that let's you easily access certain sets of the data, and call functions on collections.
+3. Cacheing, flagged queries can be cached in (potentially) session to make repetative calls quicker
 4. Multiple queries in define, allow the user a way to create multiple queries in one define statement (if it calls for it, will make JSON queries a priority).
 
-## the above points will mark the release of the library, after this I will mostly stop developing the library for work, and work on it only as a personal project
+### the above points will mark the release of the library, after this I will mostly stop developing the library for work, and work on it only as a personal project
 
 ---
 
-4. Migration abstratction class, a class that will make migration calss easier. and excecuted without using the define function.
-5. Query abstraction class, similar to the migration abstraction class, but then from within the application and not from a script
-6. CLI tool, a cli tool to make migrations easier.
-7. Custom abstraction classes. allow users to easily make abstratction classes and hook them into the library
-8. Support for JSON query objects and abstract JSON query objects.
+4. SchemaEngine, this wil cointain functionality like: create from existing database, update on migration and create alongside database
+5. Migration abstratction class, a class that will make migration calss easier. and excecuted without using the define function.
+6. Query abstraction class, similar to the migration abstraction class, but then from within the application and not from a script
+7. CLI tool, a cli tool to make migrations easier.
+8. Custom abstraction classes. allow users to easily make abstratction classes and hook them into the library
+9. Support for JSON query objects and abstract JSON query objects.
 
 any and all suggestions are welcome.

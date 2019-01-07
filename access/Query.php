@@ -8,8 +8,17 @@ namespace access;
 use \helpers\BaseQuery;
 use \helpers\IBaseQuery;
 
+/**
+ * class that holds all the information and functions for creating database queries
+ */
 class Query extends BaseQuery
 {
+  /**
+   * function that creates the Query object
+   *
+   * @param   array   $tables - tables to be affected bythe query
+   * @return  Query
+   */
   public static function start($tables)
   {
     $query = new Query();
@@ -17,7 +26,12 @@ class Query extends BaseQuery
     return $query;
   }
 
-  //some sql helpers
+  /**
+   * function that turns the query into a read/select query
+   *
+   * @param   array   $toSelect - holds all of the paramaters for the select/read call
+   * @return  Query
+   */
   public function select(array $toSelect = ["*"])
   {
     //implement schema support later
@@ -27,6 +41,12 @@ class Query extends BaseQuery
     return $this;
   }
 
+  /**
+   * function that turns the query into a update query
+   *
+   * @param   array   $toUpdate - holds all of the paramaters for the update call
+   * @return  Query
+   */
   public function update(array $toUpdate)
   {
     //implement schema support later
@@ -37,6 +57,11 @@ class Query extends BaseQuery
     return $this;
   }
 
+  /**
+   * function that turns the query into a delete/remove query
+   *
+   * @return  Query
+   */
   public function remove()
   {
     //implement schema support later
@@ -45,6 +70,12 @@ class Query extends BaseQuery
     return $this;
   }
 
+  /**
+   * function that turns the query into a create/insert query
+   *
+   * @param   array     $toInsert - holds all of the parameters for the insert/create call
+   * @return  Query
+   */
   public function insert(array $toInsert)
   {
     //implement schema support later
@@ -55,6 +86,12 @@ class Query extends BaseQuery
     return $this;
   }
 
+  /**
+   * function that defines a condition on the query
+   *
+   * @param   array   $conditions - holds all of the parameters for the where statement
+   * @return  Query
+   */
   public function where(array $conditions)
   {
     if(!isset($this->components["action"])){
@@ -66,17 +103,11 @@ class Query extends BaseQuery
     return $this;
   }
 
-  public function conditional(array $conditionals)
-  {
-    if(!isset($this->components["action"])){
-      throw new \Exception("cannot declare conditional statement before the action");
-    }
-    //create some functions that check certain things in the database
-    $this->components["conditionals"] = $conditionals;
-
-    return $this;
-  }
-
+  /**
+   * function that defines the end of the query, and adds the affected table to the query object
+   *
+   * @return  Query
+   */
   public function endQuery()
   {
     $this->components["tables"] = $this->tables;

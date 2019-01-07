@@ -8,10 +8,24 @@ namespace engines;
 use \helpers\QueryCreatorHelper;
 use \helpers\BaseEngine;
 
+/**
+ * class that turns the Migration object into a valid MySQLi statement
+ */
 class MigrationCreator extends BaseEngine
 {
+  /**
+   * trait that has some functions for dealing with decoding the object to a query string
+   */
   use QueryCreatorHelper;
 
+  /**
+   * function that is exposed, takes in the querycomponents from the query object, and
+   * checks the action index for the action to take. then calls the apropriate method
+   * per action
+   *
+   * @param   array   $queryComponents - array with the selectors and values for the query
+   * @return  void
+   */
   public static function createQuery(array $queryComponents)
   {
     switch ($queryComponents["action"]) {
@@ -34,7 +48,12 @@ class MigrationCreator extends BaseEngine
   
   //create backup takes in the previous schema, queries all known tables for their data.
 
-  //create table
+  /**
+   * function that takes the query components of the migration and turns it into a sql statement,
+   * creates a table.
+   *
+   * @return  void
+   */
   public function create()
   {
     $stringComponents = [];
@@ -56,7 +75,12 @@ class MigrationCreator extends BaseEngine
     //update the schema
   }
 
-  //update table
+  /**
+   * function that takes the query components of the migration and turns it into a sql statement,
+   * updates table name, field structure and fieldname & structure
+   *
+   * @return  void
+   */
   public function update()
   {
     $stringComponents = [];
@@ -90,7 +114,12 @@ class MigrationCreator extends BaseEngine
     //update the schema
   }
 
-  //delete table
+  /**
+   * function that takes the query componenets of the migration and turns it into a sql statement,
+   * delete's tables and fields
+   *
+   * @return  void
+   */
   public function remove()
   {
     $stringComponents = [];

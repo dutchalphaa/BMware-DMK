@@ -9,10 +9,24 @@ use \helpers\QueryCreatorHelper;
 use \helpers\BaseEngine;
 use \access\Query;
 
+/**
+ * class that turns the Query object into a valid MySQLi statement
+ */
 class QueryCreator extends BaseEngine
 {
+  /**
+   * trait that has some functions for dealing with decoding the object to a query string
+   */
   use QueryCreatorHelper;
 
+  /**
+   * function that is exposed, takes in the querycomponents from the query object, and
+   * checks the action index for the action to take. then calls the apropriate method
+   * per action
+   *
+   * @param   array   $queryComponents - array with the selectors and values for the query
+   * @return  void
+   */
   public static function createQuery(array $queryComponents)
   {
     switch ($queryComponents["action"]) {
@@ -38,6 +52,13 @@ class QueryCreator extends BaseEngine
     }
   }
 
+
+  /**
+   * function that takes the query components of the query object and turns it into a sql statement,
+   * adds a row to the table.
+   *
+   * @return  void
+   */
   public function create()
   {
     $stringComponents = [];
@@ -53,6 +74,12 @@ class QueryCreator extends BaseEngine
     $this->query = \implode("", $stringComponents);
   }
 
+  /**
+   * function that takes the query components of the query object and turns it into a sql statement,
+   * returns the selected rows
+   *
+   * @return  void
+   */
   public function read()
   {
     $stringComponents = [];
@@ -71,6 +98,12 @@ class QueryCreator extends BaseEngine
     $this->query = \implode(" ", $stringComponents);
   }
 
+  /**
+   * function that takes the query components of the query object and turns it into a sql statement,
+   * updates the selected rows
+   *
+   * @return  void
+   */
   private function update()
   {
     $stringComponents = [];
@@ -89,6 +122,12 @@ class QueryCreator extends BaseEngine
     $this->query = \implode(" ", $stringComponents);
   }
 
+  /**
+   * function that takes the query components of the query object and turns it into a sql statement,
+   * delete's the selected rows
+   *
+   * @return  void
+   */
   private function remove()
   {
     $stringComponents = [];
@@ -104,6 +143,4 @@ class QueryCreator extends BaseEngine
 
     $this->query = \implode(" ", $stringComponents);
   }
-
-  //conditional functions that test certain db things here
 }

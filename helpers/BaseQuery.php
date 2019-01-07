@@ -5,6 +5,9 @@
 
 namespace helpers;
 
+/**
+ * base class for the query objects
+ */
 class BaseQuery  
 {
   public $tables;

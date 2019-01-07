@@ -50,17 +50,7 @@ $database = DatabaseConfig::create([
 
 $database->define(function($context){
   // SchemaEngine::createXmlFileWithSchema("realSchema.xml", $context("databaseSchema"));
-  return Migration::start(["user"], $context("databaseSchema"))
-  ->alter([
-    "selectors" => "email",
-    "values" => ["e_mail" => "VARCHAR(822)"]
-  ])
-  ->endQuery();
-
-});
-
-$database->define(function($context){
-  echo "<pre>"; var_dump($context("databaseSchema")); echo "</pre>";
+  var_dump($context("databaseName"));
 });
 
 // echo "<pre>";var_dump($database);echo "</pre>";

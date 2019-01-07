@@ -13,20 +13,55 @@ use \config\DatabaseConfig;
 use \access\Migration;
 use \access\Query;
 
+/**
+ * class that has all of the functionality for making calls to the SQL database
+ */
 final class Database
 {
+  /**
+   * holds the schema object of the database
+   *
+   * @var DatabaseSchema
+   */
   private $databaseSchema;
+  /**
+   * holds the name of the database
+   *
+   * @var string
+   */
   private $databaseName;
+  /**
+   * holds the sql connection variable
+   *
+   * @var mysqli
+   */
   private $conn;
+  /**
+   * holds a value that represents wether or not the getaccess function can be called
+   *
+   * @var boolean
+   */
   private $access = false;
 
-
+  /**
+   * initialize some variable for the database object
+   *
+   * @param   DatabaseConfig  $config - holds all the config options for the database object
+   */
   public function __construct(DatabaseConfig $config)
   {
     $this->conn = $config->conn;
     $this->databaseName = $config->databaseName;
   }
 
+  /**
+   * function that allows you to call certain private methods and properties within define function,
+   * it is passed to define as a argument
+   *
+   * @param   string  $toAccess - name of the function or property to access
+   * @param   any     $arg      - argument for the function
+   * @return  any
+   */
   public function getAccess($toAccess, $arg = null)
   {
     if($this->access) {
@@ -41,6 +76,14 @@ final class Database
     }
   }
     
+  /**
+   * function that gives the user access to the database using the Query/Migration object,
+   * or alternatively, create a custom query with the excecuteQuery function
+   *
+   * @param   callable  $definition - custom function that either returns a Query/Migration object,
+   * or null if a custom query is excecuted
+   * @return  void
+   */
   public function define(callable $definition)
   {
     $this->access = true;
@@ -82,6 +125,12 @@ final class Database
     return $this;
   }
 
+  /**
+   * function that adds the database schema to the database object
+   *
+   * @param string|DatabaseSchema  $databaseSchema
+   * @return void
+   */
   private function modelDatabaseWithSchema($databaseSchema)
   {
     if($databaseSchema instanceof DatabaseSchema) {
@@ -94,6 +143,13 @@ final class Database
     //migration logics here
   }
 
+  /**
+   * function that allows you to wrtie pure SQL to the database, use only if truly necisairy.
+   * because this will skip some of the optimization
+   *
+   * @param string $query
+   * @return void
+   */
   private function excecuteQuery(string $query)
   {
     $result = \mysqli_query($this->conn, $query);
