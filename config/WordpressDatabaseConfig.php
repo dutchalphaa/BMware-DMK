@@ -13,35 +13,36 @@ use \access\WordpressDatabase;
 class WordpressDatabaseConfig  
 {
   /**
-   * holds the name of the database
+   * holds wp connection to the database
    *
-   * @var string
+   * @var   string
    */
-  public $databaseName = "bmbuilder_database";
+  public $conn;
   /**
-   * holds the servername of the database
+   * holds the prefix of the website
    *
-   * @var string
+   * @var   string
    */
-
+  public $prefix;
+  
   /**
    * initialize variables
    */
-  public function __construct(string $servername, string $username, string $password)
+  public function __construct()
   {
+    global $wpdb;
+    $this->conn = $wpdb;
+    $this->prefix = $wpdb->prefix;
   }
 
   /**
    * function that creates a database object with the given information
    *
-   * @param   array   $conectionVariables - array of values that include the database name, username, password, host
-   * and variables to indicate wether to make a new database or not.
-   * @return  Database
+   * @return  WordpressDatabase
    */
-  public static function create(array $conectionVariables)
+  public static function create()
   {
     $config = new WordpressDatabaseConfig();
-    $config->createDatabase();
 
     return new WordpressDatabase($config);
   }

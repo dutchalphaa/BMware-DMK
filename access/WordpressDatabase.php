@@ -25,17 +25,13 @@ final class WordpressDatabase
    */
   private $databaseSchema;
   /**
-   * holds the name of the database
-   *
-   * @var string
-   */
-  private $databaseName;
-  /**
    * holds the sql connection variable
    *
    * @var mysqli
    */
   private $access = false;
+  private $conn;
+  private $prefix;
 
   /**
    * initialize some variable for the database object
@@ -44,7 +40,8 @@ final class WordpressDatabase
    */
   public function __construct(WordpressDatabaseConfig $config)
   {
-    $this->databaseName = $config->databaseName;
+    $this->conn = $config->conn;
+    $this->prefix = $config->prefix;
   }
 
   /**
@@ -145,6 +142,7 @@ final class WordpressDatabase
    */
   private function excecuteQuery(string $query)
   {
-    //make this a wordpress call
+    $result = $this->conn->get_results($query, ARRAY_A);
+    var_dump($result);
   }
 }
