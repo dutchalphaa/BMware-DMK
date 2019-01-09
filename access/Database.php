@@ -9,6 +9,7 @@ use \engines\MigrationCreator;
 use \engines\SchemaEngine;
 use \engines\QueryCreator;
 use \models\DatabaseSchema;
+use \models\DatabaseResult;
 use \config\DatabaseConfig;
 use \access\Migration;
 use \access\Query;
@@ -157,7 +158,31 @@ final class Database
     if(\mysqli_error($this->conn)){
       throw new \Exception("Query invalid, here's what went wrong: " . \mysqli_error($this->conn));
     }
+    $queryResult = '';
+    $numrows = 0;
+
     //cast into a database result object
-    var_dump($result);
+    if(is_bool($result)){
+      if($result) {
+        $queryResult = "row(s) successfully added/altered";
+      }else{
+        $queryResult = "row(s) not added/altered";
+      }
+    }else {
+      $rows = [];
+  
+      if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+          array_push($rows, $row);
+        }
+
+        $queryResult = $rows;
+        $numrows = $result->num_rows;
+
+      } else {
+        $queryResult = "0 results";
+      }
+    }
+    return new DatabaseResult($queryResult, $numrows);
   }
 }

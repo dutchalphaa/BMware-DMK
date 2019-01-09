@@ -81,10 +81,6 @@ class DatabaseConfig
    */
   public function connect(bool $createDB = false)
   { 
-    if($this->createFunction != true){
-      throw new \Exception("this class will only work if you call it from the static create method");
-    }
-
     if($createDB){
       $this->conn = \mysqli_connect($this->servername, $this->username, $this->password); 
       if (!$this->conn) {

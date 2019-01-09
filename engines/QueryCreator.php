@@ -85,7 +85,7 @@ class QueryCreator extends BaseEngine
     $stringComponents = [];
     $comp = $this->components;
 
-    array_push($stringComponents, "SELECT" . $this->mutlipleValues("selectors"));
+    array_push($stringComponents, "SELECT " . $this->mutlipleValues("selectors"));
 
     if(!is_array($comp["tables"])){
       array_push($stringComponents, "FROM " . $comp["tables"]);
