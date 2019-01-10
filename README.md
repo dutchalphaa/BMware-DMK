@@ -226,20 +226,18 @@ Also, something that i want to work on in the near future, Which probably wont b
 
 this is a list of things that I want to add
 
-1. Wordpress config and database class, custom config class that skipps the unnecesary setup steps and a custom database class that will redefine how the queries are made.
-2. DatabaseResult class, custom result class with modifiers that let's you easily access certain sets of the data, and call functions on collections.
-3. Cacheing, flagged queries can be cached in (potentially) session to make repetative calls quicker
-4. Multiple queries in define, allow the user a way to create multiple queries in one define statement (if it calls for it, will make JSON queries a priority).
+1. Multiple queries in define, allow the user a way to create multiple queries in one define statement (if it calls for it, will make JSON queries a priority).
 
 ### the above points will mark the release of the library, after this I will mostly stop developing the library for work, and work on it only as a personal project
 
 ---
 
-4. SchemaEngine, this wil cointain functionality like: create from existing database, update on migration and create alongside database
-5. Migration abstratction class, a class that will make migration calss easier. and excecuted without using the define function.
-6. Query abstraction class, similar to the migration abstraction class, but then from within the application and not from a script
-7. CLI tool, a cli tool to make migrations easier.
-8. Custom abstraction classes. allow users to easily make abstratction classes and hook them into the library
-9. Support for JSON query objects and abstract JSON query objects.
+2. SchemaEngine, this wil cointain functionality like: create from existing database, update on migration and create alongside database
+3. Migration abstratction class, a class that will make migration calss easier. and excecuted without using the define function.
+4. Query abstraction class, similar to the migration abstraction class, but then from within the application and not from a script
+5. CLI tool, a cli tool to make migrations easier.
+6. Custom abstraction classes. allow users to easily make abstratction classes and hook them into the library
+7. Cacheing, flagged queries can be cached in (potentially) session to make repetative calls quicker
+8. Support for JSON query objects and abstract JSON query objects.
 
 any and all suggestions are welcome.
