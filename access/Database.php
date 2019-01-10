@@ -116,9 +116,9 @@ final class Database
     }
 
     if(isset($result)){
-      if(!isset($this->databaseSchema)) {
-        \mysqli_close($this->conn);
-      }
+      // if(!isset($this->databaseSchema)) {
+      //   \mysqli_close($this->conn);
+      // }
       $this->access = false;
       return $result;
     }

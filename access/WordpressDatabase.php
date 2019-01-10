@@ -10,6 +10,7 @@ use \engines\MigrationCreator;
 use \engines\SchemaEngine;
 use \engines\QueryCreator;
 use \models\DatabaseSchema;
+use \models\DatabaseResult;
 use \access\Migration;
 use \access\Query;
 
@@ -105,9 +106,6 @@ final class WordpressDatabase
     }
 
     if(isset($result)){
-      if(!isset($this->databaseSchema)) {
-        \mysqli_close($this->conn);
-      }
       $this->access = false;
       return $result;
     }
@@ -143,6 +141,15 @@ final class WordpressDatabase
   private function excecuteQuery(string $query)
   {
     $result = $this->conn->get_results($query, ARRAY_A);
-    var_dump($result);
+    
+    if(empty($result)){
+      $result = "query excecuted, result unknown";
+      $count = 0;
+    } else {
+      $count = count($result);
+    }
+
+
+    return new DatabaseResult($result, $count);
   }
 }

@@ -224,20 +224,13 @@ Also, something that i want to work on in the near future, Which probably wont b
 
 # Planning
 
-this is a list of things that I want to add
-
-1. Multiple queries in define, allow the user a way to create multiple queries in one define statement (if it calls for it, will make JSON queries a priority).
-
-### the above points will mark the release of the library, after this I will mostly stop developing the library for work, and work on it only as a personal project
-
----
-
+1. Join statements, support for join statements in the query object
 2. SchemaEngine, this wil cointain functionality like: create from existing database, update on migration and create alongside database
 3. Migration abstratction class, a class that will make migration calss easier. and excecuted without using the define function.
 4. Query abstraction class, similar to the migration abstraction class, but then from within the application and not from a script
 5. CLI tool, a cli tool to make migrations easier.
 6. Custom abstraction classes. allow users to easily make abstratction classes and hook them into the library
-7. Cacheing, flagged queries can be cached in (potentially) session to make repetative calls quicker
-8. Support for JSON query objects and abstract JSON query objects.
+7. Support for JSON query objects and abstract JSON query objects.
+8. Cacheing, flagged queries can be cached in (potentially) session to make repetative calls quicker
 
 any and all suggestions are welcome.
