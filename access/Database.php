@@ -83,7 +83,7 @@ final class Database
    *
    * @param   callable  $definition - custom function that either returns a Query/Migration object,
    * or null if a custom query is excecuted
-   * @return  void
+   * @return  any
    */
   public function define(callable $definition)
   {
@@ -132,7 +132,7 @@ final class Database
    * @param string|DatabaseSchema  $databaseSchema
    * @return void
    */
-  private function modelDatabaseWithSchema($databaseSchema)
+  private function notFinished_modelDatabaseWithSchema($databaseSchema)
   {
     if($databaseSchema instanceof DatabaseSchema) {
       $this->databaseSchema = $databaseSchema;
@@ -145,11 +145,11 @@ final class Database
   }
 
   /**
-   * function that allows you to wrtie pure SQL to the database, use only if truly necisairy.
-   * because this will skip some of the optimization
+   * Function that excecutes the function on the database, and casts the result into a DatabaseResult object.
+   * Can be called manualy however this is advised against.
    *
    * @param string $query
-   * @return void
+   * @return DatabaseResult
    */
   private function excecuteQuery(string $query)
   {

@@ -25,7 +25,7 @@ class QueryCreator extends BaseEngine
    * per action
    *
    * @param   array   $queryComponents - array with the selectors and values for the query
-   * @return  void
+   * @return  Query
    */
   public static function createQuery(array $queryComponents)
   {

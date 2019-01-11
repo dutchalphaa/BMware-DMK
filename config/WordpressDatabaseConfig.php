@@ -8,7 +8,7 @@ namespace config;
 use \access\WordpressDatabase;
 
 /**
- * class that takes care of setting up the database for later use
+ * class that sets up the database to use with wordpress
  */
 class WordpressDatabaseConfig  
 {
@@ -36,7 +36,7 @@ class WordpressDatabaseConfig
   }
 
   /**
-   * function that creates a database object with the given information
+   * function that creates the database object
    *
    * @return  WordpressDatabase
    */

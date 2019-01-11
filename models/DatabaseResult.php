@@ -10,14 +10,50 @@ namespace models;
  */
 class DatabaseResult
 {
+  /**
+   * variable that holds the amount of rows returned by the query
+   *
+   * @var int
+   */
   public $numRows;
-  public $useModified = false;
+  /**
+   * variable that indicates wether to use the $this->modifiedRows variable as the base of the modifier function.
+   * default is false.
+   *
+   * @var boolean
+   */
+  private $useModified = false;
+  /**
+   * variable that stores the previous value of midifiedRows, gets set when $this->getRows("modified") is called
+   *
+   * @var array
+   */
+  private $savedModifiedRows;
+  /**
+   * variable that holds the current modifiedRows, gets set when $this->useModified == true and a modifier function is called
+   *
+   * @var array
+   */
   private $modifiedRows = [];
-  private $variables = [];
-  private $access = false;
+  /**
+   * variable that holds a message if no rows are returned
+   *
+   * @var string
+   */
   private $result;
+  /**
+   * variable that holds the unmodified results of the query
+   *
+   * @var array
+   */
   private $rows;
 
+  /**
+   * initialize some variables
+   *
+   * @param   array|string  $rows
+   * @param   integer       $numRows
+   */
   public function __construct($rows, int $numRows)
   {
     if(is_string($rows)){
@@ -28,6 +64,12 @@ class DatabaseResult
     $this->numRows = $numRows;
   }
 
+  /**
+   * sets the value of the $this->useModified variable to the value $value
+   *
+   * @param   boolean   $value
+   * @return  void
+   */
   public function setUseModified(bool $value)
   {
     $this->useModified = $value;
@@ -39,11 +81,22 @@ class DatabaseResult
     return $this;
   }
 
-  public function getUseModifeid()
+  /**
+   * returns the value of the $this->useModified variable
+   *
+   * @return void
+   */
+  public function getUseModified()
   {
     return $this->useModified;
   }
 
+  /**
+   * modifies the rows to only return the row with the given index
+   *
+   * @param   integer   $index
+   * @return  void
+   */
   public function getRowByIndex(int $index)
   {
     if($this->useModified){
@@ -57,14 +110,18 @@ class DatabaseResult
     return $this;
   }
 
+  /**
+   * mofifies the rows to only return the rows were the value of the given $field matches the given $value
+   *
+   * @param   string  $field
+   * @param   string  $value
+   * @return  void
+   */
   public function getRowsByFieldValue(string $field, string $value)
   {
-    array_push($this->variables, $field, $value);
-    $oldArray = $this->variables;
-
-    $this->iterate(function($index, $row, $modifiedRows){
-      foreach($row as $field => $value){
-        if($field === $this->variables[0] && $value === $this->variables[1]) {
+    $this->iterate(function($index, $row, $modifiedRows) use(&$field, &$value){
+      foreach($row as $fieldName => $fieldValue){
+        if($fieldName === $field && $fieldValue === $value) {
           array_push($this->modifiedRows, $this->rows[$index]);
         }
       }  
@@ -73,16 +130,17 @@ class DatabaseResult
     return $this;
   }
 
-  public function getFields(string ...$fields)
+  /**
+   * modifies the rows to only return the given ...$fields
+   *
+   * @param string ...$fields
+   * @return void
+   */
+  public function selectFields(string ...$fields)
   {
-    array_push($this->variables, ...$fields);
-    $oldArray = $this->variables;
-
-    $this->iterate(function($index, $row, $modifiedRows){
-        $this->modifiedRows[$index] = [];
-
+    $this->iterate(function($index, $row, $modifiedRows) use(&$fields){
         foreach ($row as $field => $value) {
-          if(in_array($field, $this->variables)){
+          if(in_array($field, $fields)){
             $this->modifiedRows[$index][$field] = $value;
           }
         }
@@ -91,20 +149,35 @@ class DatabaseResult
     return $this;
   }
 
-  public function getRows()
+  /**
+   * returns either the previous mofified, modified or base rows depending on the flag,
+   * flags: previous, modified. defaults to the base rows 
+   *
+   * @param   string  $flag
+   * @return  void
+   */
+  public function getRows(string $flag = "")
   {
-    if($this->useModified){
+    if($flag === "modified"){
       $rows = $this->modifiedRows;
+      $this->savedModifiedRows = $this->modifiedRows;
+      $this->modifiedRows = $this->rows;
+    } elseif($flag === "previous") {
+      $rows = $this->savedModifiedRows;
     } else {
       $rows = $this->rows;
     }
 
     $this->variables = [];
-    $this->modifiedRows = $this->rows;
 
     return $rows;
   }
 
+  /**
+   * returns the string stored in $this->result
+   *
+   * @return bool|null
+   */
   public function getMessage()
   {
     if(isset($this->result)){
@@ -115,7 +188,14 @@ class DatabaseResult
     return null;
   }
 
-  public function iterate(callable $function, bool $recursive = false, ...$variables)
+  /**
+   * iterates over the rows and calls a function on all of the rows, or on all of the values if $recursive = true
+   *
+   * @param   callable $function
+   * @param   boolean $recursive
+   * @return  void
+   */
+  public function iterate(callable $function, bool $recursive = false)
   {
     if($this->useModified){
       $rows = $this->modifiedRows;
@@ -124,59 +204,18 @@ class DatabaseResult
       $rows = $this->rows;
     }
 
-    $this->access = true;
-
     if(isset($this->result)){
       $function($this->result);
     } else {
       foreach($rows as $index => $row){
         if($recursive){
           foreach($row as $key => $value){
-            $function($key, $value, [$this, "context"]);
+            $function($key, $value);
           }
         }else {
-          $function($index, $row, [$this, "context"]);
+          $function($index, $row);
         }
       }
-    }
-
-    $this->access = false;
-    $this->variables = [];  
+    } 
   }
-
-  public function context(string $action = "" , ...$params)
-  {
-    if(!$this->access){
-      if($action != "variables"){
-        throw new \Exception("this function can only be used outside of iterate to set variables for iterate");
-      } 
-    }
-
-    if(empty($params)){
-      if($action === "variables"){
-        return $this->variables;
-      } else {
-        return $this->modifiedRows;
-      }
-    } else {
-      if($action === "variables"){
-        array_push($this->variables, ...$params);
-      } elseif($action === "push"){
-        array_push($this->modifiedRows, ...$params);
-      } elseif ($action === "set") {
-        if(isset($params[1])){
-          $this->modifiedRows[$params[1]] = $params[0]; 
-        } else {
-          $this->modifiedRows = $params[0];
-        }
-      }
-    }
-  }
-
-  public function useVariables(...$params)
-  { 
-    array_push($this->variables, ...$params);
-    return $this;
-  }
-
 }
