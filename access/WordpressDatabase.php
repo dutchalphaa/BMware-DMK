@@ -15,7 +15,7 @@ use \access\Migration;
 use \access\Query;
 
 /**
- * class that has all of the functionality for making calls to the SQL database
+ * class that uses the wordpress wpdb class to make calls to the database
  */
 final class WordpressDatabase
 {
@@ -26,13 +26,23 @@ final class WordpressDatabase
    */
   private $databaseSchema;
   /**
-   * holds the sql connection variable
+   * variable that indicates wether someone is allowed acces to certain functions
    *
-   * @var mysqli
+   * @var boolean
    */
   private $access = false;
+  /**
+   * variable that holds the global wpdb class
+   *
+   * @var wpdb
+   */
   private $conn;
-  private $prefix;
+  /**
+   * variable that holds the prefix that is chosen by the user
+   *
+   * @var string
+   */
+  public $prefix;
 
   /**
    * initialize some variable for the database object
@@ -73,7 +83,7 @@ final class WordpressDatabase
    *
    * @param   callable  $definition - custom function that either returns a Query/Migration object,
    * or null if a custom query is excecuted
-   * @return  void
+   * @return  any
    */
   public function define(callable $definition)
   {
@@ -136,7 +146,7 @@ final class WordpressDatabase
    * because this will skip some of the optimization
    *
    * @param string $query
-   * @return void
+   * @return DatabaseResult
    */
   private function excecuteQuery(string $query)
   {

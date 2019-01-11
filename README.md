@@ -2,7 +2,7 @@
 
 BMware database management kit
 
-basic setup example
+there are currently 2 basic setup examples, the first is the normal db setup:
 
 ```PHP
 require_once("vendor/autoload.php");
@@ -16,9 +16,7 @@ $database = DatabaseConfig::create([
   "password" => "",
   "useExistingDatabase" => true,
   "databaseName" => "bmbuilder_testing"
-])->define(function($context){
-  $context("modelDatabaseWithSchema", "schema.xml")
-});
+]);
 ```
 
 `DatabaseConfig::create()` takes in an array of arguments.
@@ -30,7 +28,18 @@ $database = DatabaseConfig::create([
 - databaseName: the name of the database that you want to use, if useExistingDatabase is false
   this becomes the name of the new database. Leave empty to use the default database name: bmbuilder_testing
 
-the define function is called to set up the initial schema for the database, this is done to unlock migrations. Right from the start, however this is optional
+The second one is a WordPress based setup.
+
+```PHP
+require_once("vendor/autoload.php");
+
+use config\WordpressDatabaseConfig;
+use access\Query;
+
+$database = WordpressDatabaseConfig::create();
+```
+
+_other than then the setup, using either class is the same. however, under the hood, the WordpressDatabase uses the global wpdb to make queries to the database_
 
 ---
 
@@ -112,107 +121,41 @@ $database->define(function($context){
 });
 ```
 
-_note that when using the Query object you need to return it, but not when using a custom query(yet)_
+_note that when using the Query object you need to return it, but not when using a custom query_
 
 ---
 
-### Migrations
+### DatabaseResult
 
-similar to the Query object, migrations also have their own object. a simple migration example looks the following.
+Every Query result will return a DatabaseResult object, which holds either a success message, or the rows of the query. You will also have access to various different result modifiers from that point, in order to select one out of the many results. This will allow you to query all of the data once, and internally select what you want to see at any given point. the data is never overridden so you will always have the result of query
 
-```php
-use access\Migration;
+example of the result modifiers in work
 
-$database->define(function($context){
-  return Migration::start(["start"], $context("databaseSchema"))
-  ->create([
-    "ID" => "INT(255) NOT NULL AUTO_INCREMENT",
-    "email" => "VARCHAR(255) NOT NULL",
-    "created at" => "DATETIME DEFAULT CURRENT_TIMESTAMP",
-    "PRIMARY" => "ID"
-  ])
-  ->endQuery();
-});
+```PHP
+$result->setUseModified(true) //tell the object to use the modifiedRow as the base for the next call
+
+$result->getRowsByFieldValue("email", "hello@world.code")->selectFields("id")->getRows("modified"); // you can chain as many as you want toghetter however some might clash with eachother
+
+$result->iterate(function($index, $row) use($someGlobalVariable){
+  //this function here will be excecuted on all array items,
+  //if the second variable is set, this function will be called on all values
+  //the use() is used to bind $someGlobalVariable to the function scope this is completely optional
+})->getRows("modified");
 ```
 
-_note that a custom migration class will be added later, to abstract the calls even more. but it will translate to these calls which in turn will translate back into MySQLi statements_
+`$result->setUseModified(boolean $value)` sets the `$result->useModified` variable to the value of `$value`, which will make all modifier functions use the `$result->modifiedRows` as the base point for the function
 
-`Migration::start()` takes in 2 arguments:
+`$result->getUseModified()` returns the current value of `$result->useModified`
 
-- the name of the table(s) that you want to effect.
-- the schema of the database, which is called with the `$context("databaseSchema")` function that is passed as a parameter
+`$result->getRowByIndex(int $index)` returns the row with the given `$index`
 
-there are currently 3 query statements predefined in this library:
+`$result->getRowsByFieldValue(string $field, string $value)` returns all rows where the given `$field` has the same value as `$value`
 
-- create
+`$result->selectfields(string ...$fields)` returns only the fields specified in this function
 
-```php
-use access\Migration;
+`$result->getRows(string $flag)` depending on the value of `$flag` returns either the previous modified rows, base rows or current modified rows, the flags are: `"previous"` for the previous modified rows or `"modified"` for the current modified rows, anything else will just return the queries base result
 
-$database->define(function($context){
-  return Migration::start(["start"], $context("databaseSchema"))
-  ->create([
-    "ID" => "INT(255) NOT NULL AUTO_INCREMENT",
-    "email" => "VARCHAR(255) NOT NULL",
-    "created_at" => "DATETIME DEFAULT CURRENT_TIMESTAMP",
-    "PRIMARY" => "ID"
-  ])
-  ->endQuery();
-});
-```
-
-- update
-
-_note you can update the table name, and the fields_
-
-```php
-use access\Migration;
-
-$database->define(function($context){
-  //currently only 1 query can be made per define, this wil change in the future, so remove the statements you dont want to try
-
-  //alter table name
-  return Migration::start(["start"], $context("databaseSchema"))
-  ->alter(["values" => "users"])
-  ->endQuery();
-
-  //alter field name and structure
-  return Migration::start(["users"], $context("databaseSchema"))
-  ->alter([
-    "selectors" => "email",
-    "values" => ["e_mail" => "VARCHAR(20)"]
-  ])
-  ->endQuery();
-
-  //alter field structure
-  return Migration::start(["users"], $context("databaseSchema"))
-  ->alter([
-    "selectors" => "e_mail",
-    "values" => "VARCHAR(30) DEFAULT 'boydvree@BMware.com'"
-  ])
-  ->endQuery();
-});
-```
-
-- delete
-
-_note you can delete tables or fields_
-
-```php
-use \access\Migration;
-
-$database->define(function($context){
-  //drop field
-  return Migration::start(["users"], $context("databaseSchema"))
-  ->drop(["e_mail", "created_at"])
-  ->endQuery();
-
-  //drop table, multiple tables can be dropped at once by adding more to the array of tables
-  return Migration::start(["users"], $context("databaseSchema"))
-  ->drop()
-  ->endQuery();
-});
-```
+`$result->iterate(callable $function, bool $recursive)` calls the `$function` on every row, or value depending on the value of `$recursive`. use `use($someGlobalVariable)` to bind a global variable to the function scope, use `use(&$someGlobalVariable)` to bind a global variable to the function scope and actually alter the variable
 
 ---
 
