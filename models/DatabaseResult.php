@@ -119,7 +119,7 @@ class DatabaseResult
    */
   public function getRowsByFieldValue(string $field, string $value)
   {
-    $this->iterate(function($index, $row, $modifiedRows) use(&$field, &$value){
+    $this->iterate(function($index, $row) use(&$field, &$value){
       foreach($row as $fieldName => $fieldValue){
         if($fieldName === $field && $fieldValue === $value) {
           array_push($this->modifiedRows, $this->rows[$index]);
@@ -138,7 +138,7 @@ class DatabaseResult
    */
   public function selectFields(string ...$fields)
   {
-    $this->iterate(function($index, $row, $modifiedRows) use(&$fields){
+    $this->iterate(function($index, $row) use(&$fields){
         foreach ($row as $field => $value) {
           if(in_array($field, $fields)){
             $this->modifiedRows[$index][$field] = $value;
