@@ -1,4 +1,5 @@
 {
+  "version": "v1.1.1",
   "name": "bmware/dmk",
   "description": "MySQLi database toolkit",
   "type": "package",

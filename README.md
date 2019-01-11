@@ -2,6 +2,8 @@
 
 BMware database management kit
 
+composer: `composer require bmware/dmk`
+
 there are currently 2 basic setup examples, the first is the normal db setup:
 
 ```PHP
