@@ -6,7 +6,6 @@
 namespace dist;
 
 use \helpers\BaseQuery;
-use \helpers\IBaseQuery;
 
 /**
  * class that holds all the information and functions for creating database queries

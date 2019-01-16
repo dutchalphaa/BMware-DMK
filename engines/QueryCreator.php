@@ -85,10 +85,14 @@ class QueryCreator extends BaseEngine
     $stringComponents = [];
     $comp = $this->components;
 
-    array_push($stringComponents, "SELECT " . $this->mutlipleValues("selectors"));
+    if($comp["selectors"][0] == "*"){
+      array_push($stringComponents, "SELECT *");
+    } else {
+      array_push($stringComponents, "SELECT " . $this->enclosedValues("selectors", "`", false));
+    }
 
     if(!is_array($comp["tables"])){
-      array_push($stringComponents, "FROM " . $comp["tables"]);
+      array_push($stringComponents, "FROM `" . $comp["tables"] . "`");
     }
 
     if(isset($comp["where"])){
@@ -110,7 +114,7 @@ class QueryCreator extends BaseEngine
     $comp = $this->components;
 
     if(!is_array($comp["tables"])){
-      array_push($stringComponents, "UPDATE " . $comp["tables"]);
+      array_push($stringComponents, "UPDATE `" . $comp["tables"] . "`");
     }
 
     array_push($stringComponents, $this->setStatements());
@@ -134,10 +138,11 @@ class QueryCreator extends BaseEngine
     $comp = $this->components;
 
     if(!is_array($comp["tables"])){
-      array_push($stringComponents, "DELETE FROM " . $comp["tables"]);
+      array_push($stringComponents, "DELETE FROM `" . $comp["tables"] . "`");
     }
 
     if(isset($comp["where"])){
+      //make negative test, and test throw new error if true
       array_push($stringComponents, $this->whereStatements());
     }
 

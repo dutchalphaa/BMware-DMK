@@ -81,4 +81,15 @@ class DatabaseTest extends TestCase
       $context("excecuteQuery","hello world");
     });
   }
+
+  /**
+   * @test
+   */
+  public function invalid_return_type_throws_invalid_return_type_exception()
+  {
+    $this->expectException(\exceptions\InvalidDefineReturnType::class);
+    $this->database->define(function($context){
+      return true;
+    });
+  }
 }

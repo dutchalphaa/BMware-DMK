@@ -106,8 +106,7 @@ class DatabaseResult
       $rows = $this->rows;
     }
 
-    $this->modifiedRows = $rows[$index];
-    return $this;
+    return $rows[$index];
   }
 
   /**
@@ -216,6 +215,8 @@ class DatabaseResult
           $function($index, $row);
         }
       }
-    } 
+    }
+    
+    return $this; 
   }
 }

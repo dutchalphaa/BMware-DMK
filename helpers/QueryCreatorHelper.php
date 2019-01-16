@@ -10,17 +10,23 @@ namespace helpers;
  */
 trait QueryCreatorHelper
 {
-  private function enclosedValues(string $comp, string $delimiter/* choose a better name for this variable */)
+  private function enclosedValues(string $comp, string $delimiter, bool $enclosed = true)
   {
-    $enclosedValues = "(";
+    if($enclosed){
+      $enclosedValues = "( ";
+    } else {
+      $enclosedValues = "";
+    }
     for ($i=0; $i < \count($this->components[$comp]); $i++) { 
       if($i != \count($this->components[$comp]) - 1){
-        $enclosedValues .= " ". $delimiter . $this->components[$comp][$i]. $delimiter . ",";
+        $enclosedValues .= $delimiter . $this->components[$comp][$i]. $delimiter . ", ";
       }else {
-        $enclosedValues .= " " . $delimiter . $this->components[$comp][$i] . $delimiter;
+        $enclosedValues .= $delimiter . $this->components[$comp][$i] . $delimiter;
       }
     }
-    $enclosedValues .= ")";
+    if($enclosed){
+      $enclosedValues .= " )";
+    }
     return $enclosedValues;
   }
 
@@ -81,7 +87,7 @@ trait QueryCreatorHelper
     $setStatements = "SET ";   
     for ($i=0; $i < \count($this->components["selectors"]); $i++) { 
       if($i != \count($this->components["selectors"]) - 1){
-        $setStatements .= "`" . $this->components["selectors"][$i] . "` = '" . $this->components["values"][$i] . "' AND ";
+        $setStatements .= "`" . $this->components["selectors"][$i] . "` = '" . $this->components["values"][$i] . "', ";
       }else {
         $setStatements .= "`" . $this->components["selectors"][$i] . "` = '" . $this->components["values"][$i] . "'";
       }

@@ -114,7 +114,7 @@ final class Database
     } else if ($query instanceof DatabaseSchema){
       $this->modelDatabaseWithSchema($query);
     } else {
-      throw new \Exception("object given was not null or a query, migration or schema");
+      throw new \exceptions\InvalidDefineReturnType();
     }
 
     if(isset($result)){
@@ -138,6 +138,7 @@ final class Database
     } else if(is_string($databaseSchema)) {
       $this->databaseSchema = SchemaEngine::createSchemaWithXmlFile($databaseSchema, $this->databaseName);
     } else {
+      //make custom expception once this gets implemented
       throw new \Exception("this function expects a xml schema file location or a schema object");
     }
     //migration logics here
