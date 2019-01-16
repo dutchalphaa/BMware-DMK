@@ -7,7 +7,7 @@ namespace engines;
 
 use \helpers\QueryCreatorHelper;
 use \helpers\BaseEngine;
-use \access\Query;
+use \dist\Query;
 
 /**
  * class that turns the Query object into a valid MySQLi statement

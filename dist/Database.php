@@ -3,21 +3,21 @@
  * @package BMware DMK
  */
 
-namespace access;
+namespace dist;
 
-use \config\WordpressDatabaseConfig;
 use \engines\MigrationCreator;
 use \engines\SchemaEngine;
 use \engines\QueryCreator;
 use \models\DatabaseSchema;
 use \models\DatabaseResult;
-use \access\Migration;
-use \access\Query;
+use \config\DatabaseConfig;
+use \dist\Migration;
+use \dist\Query;
 
 /**
- * class that uses the wordpress wpdb class to make calls to the database
+ * class that has all of the functionality for making calls to the SQL database
  */
-final class WordpressDatabase
+final class Database
 {
   /**
    * holds the schema object of the database
@@ -26,33 +26,33 @@ final class WordpressDatabase
    */
   private $databaseSchema;
   /**
-   * variable that indicates wether someone is allowed acces to certain functions
+   * holds the name of the database
+   *
+   * @var string
+   */
+  private $databaseName;
+  /**
+   * holds the sql connection variable
+   *
+   * @var mysqli
+   */
+  private $conn;
+  /**
+   * holds a value that represents wether or not the getaccess function can be called
    *
    * @var boolean
    */
   private $access = false;
-  /**
-   * variable that holds the global wpdb class
-   *
-   * @var wpdb
-   */
-  private $conn;
-  /**
-   * variable that holds the prefix that is chosen by the user
-   *
-   * @var string
-   */
-  public $prefix;
 
   /**
    * initialize some variable for the database object
    *
-   * @param   WordpressDatabaseConfig  $config - holds all the config options for the database object
+   * @param   DatabaseConfig  $config - holds all the config options for the database object
    */
-  public function __construct(WordpressDatabaseConfig $config)
+  public function __construct(DatabaseConfig $config)
   {
     $this->conn = $config->conn;
-    $this->prefix = $config->prefix;
+    $this->databaseName = $config->databaseName;
   }
 
   /**
@@ -69,11 +69,16 @@ final class WordpressDatabase
       //add a kind of check to see if people can access that given function?
       if(isset($arg)) {
         if(method_exists($this, $toAccess)) {
-          $this->$toAccess($arg);
+          return $this->$toAccess($arg);
         }
       } else {
+        if($toAccess === "conn"){
+          throw new \exceptions\InvalidContextArgumentException();
+        }
         return $this->$toAccess;
       }
+    } else {
+      throw new \exceptions\NoAccessException();
     }
   }
     
@@ -88,15 +93,14 @@ final class WordpressDatabase
   public function define(callable $definition)
   {
     $this->access = true;
-    try {
-      $query = $definition(array($this, "getAccess"));
-    }
-    catch (\Exception $e){
-      $this->access = false;
-      echo $e->getMessage();
-    }
 
-    if($query instanceof Query){
+    $query = $definition(array($this, "getAccess"));
+
+    if(!isset($query)) {
+      //do nothing
+    } else if($query instanceof DatabaseResult) {
+      return $query;
+    } else if($query instanceof Query){
       //conditional logics can be excecuted here;
       
       $query = QueryCreator::createQuery($query->components);
@@ -109,8 +113,6 @@ final class WordpressDatabase
       $result = $this->excecuteQuery($query);
     } else if ($query instanceof DatabaseSchema){
       $this->modelDatabaseWithSchema($query);
-    } else if ($query == null) {
-      //do nothing
     } else {
       throw new \Exception("object given was not null or a query, migration or schema");
     }
@@ -129,7 +131,7 @@ final class WordpressDatabase
    * @param string|DatabaseSchema  $databaseSchema
    * @return void
    */
-  private function modelDatabaseWithSchema($databaseSchema)
+  private function notFinished_modelDatabaseWithSchema($databaseSchema)
   {
     if($databaseSchema instanceof DatabaseSchema) {
       $this->databaseSchema = $databaseSchema;
@@ -142,24 +144,44 @@ final class WordpressDatabase
   }
 
   /**
-   * function that allows you to wrtie pure SQL to the database, use only if truly necisairy.
-   * because this will skip some of the optimization
+   * Function that excecutes the function on the database, and casts the result into a DatabaseResult object.
+   * Can be called manualy however this is advised against.
    *
    * @param string $query
    * @return DatabaseResult
    */
   private function excecuteQuery(string $query)
   {
-    $result = $this->conn->get_results($query, ARRAY_A);
-    
-    if(empty($result)){
-      $result = "query excecuted, result unknown";
-      $count = 0;
-    } else {
-      $count = count($result);
+    $result = \mysqli_query($this->conn, $query);
+
+    if(\mysqli_error($this->conn)){
+      throw new \exceptions\InvalidQueryException("Query invalid, here's what went wrong: " . \mysqli_error($this->conn));
     }
+    $queryResult = '';
+    $numrows = 0;
 
+    //cast into a database result object
+    if(is_bool($result)){
+      if($result) {
+        $queryResult = "row(s) successfully added/altered";
+      }else{
+        $queryResult = "row(s) not added/altered";
+      }
+    }else {
+      $rows = [];
+  
+      if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+          array_push($rows, $row);
+        }
 
-    return new DatabaseResult($result, $count);
+        $queryResult = $rows;
+        $numrows = $result->num_rows;
+
+      } else {
+        $queryResult = "0 results";
+      }
+    }
+    return new DatabaseResult($queryResult, $numrows);
   }
 }

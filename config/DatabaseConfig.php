@@ -5,7 +5,8 @@
 
 namespace config;
 
-use \access\Database;
+use \dist\Database;
+use \exceptions\InvalidDatabaseNameException;
 
 /**
  * class that takes care of setting up the database for later use
@@ -106,11 +107,17 @@ class DatabaseConfig
     $config = new DatabaseConfig($conectionVariables["servername"], $conectionVariables["username"], $conectionVariables["password"]);
 
     if(isset($conectionVariables["useExistingDatabase"]) && $conectionVariables["useExistingDatabase"] == true && isset($conectionVariables["databaseName"])){
+      if($conectionVariables["databaseName"] === ""){
+        throw new InvalidDatabaseNameException("");
+      }
       $config->databaseName = $conectionVariables["databaseName"];
       $config->connect();
     }else {
       if(isset($conectionVariables["databaseName"]))
       {
+        if($conectionVariables["databaseName"] === ""){
+          throw new InvalidDatabaseNameException();
+        }
         $config->databaseName = $conectionVariables["databaseName"];
       }
       

@@ -3,21 +3,21 @@
  * @package BMware DMK
  */
 
-namespace access;
+namespace dist;
 
+use \config\WordpressDatabaseConfig;
 use \engines\MigrationCreator;
 use \engines\SchemaEngine;
 use \engines\QueryCreator;
 use \models\DatabaseSchema;
 use \models\DatabaseResult;
-use \config\DatabaseConfig;
-use \access\Migration;
-use \access\Query;
+use \dist\Migration;
+use \dist\Query;
 
 /**
- * class that has all of the functionality for making calls to the SQL database
+ * class that uses the wordpress wpdb class to make calls to the database
  */
-final class Database
+final class WordpressDatabase
 {
   /**
    * holds the schema object of the database
@@ -26,33 +26,33 @@ final class Database
    */
   private $databaseSchema;
   /**
-   * holds the name of the database
-   *
-   * @var string
-   */
-  private $databaseName;
-  /**
-   * holds the sql connection variable
-   *
-   * @var mysqli
-   */
-  private $conn;
-  /**
-   * holds a value that represents wether or not the getaccess function can be called
+   * variable that indicates wether someone is allowed acces to certain functions
    *
    * @var boolean
    */
   private $access = false;
+  /**
+   * variable that holds the global wpdb class
+   *
+   * @var wpdb
+   */
+  private $conn;
+  /**
+   * variable that holds the prefix that is chosen by the user
+   *
+   * @var string
+   */
+  public $prefix;
 
   /**
    * initialize some variable for the database object
    *
-   * @param   DatabaseConfig  $config - holds all the config options for the database object
+   * @param   WordpressDatabaseConfig  $config - holds all the config options for the database object
    */
-  public function __construct(DatabaseConfig $config)
+  public function __construct(WordpressDatabaseConfig $config)
   {
     $this->conn = $config->conn;
-    $this->databaseName = $config->databaseName;
+    $this->prefix = $config->prefix;
   }
 
   /**
@@ -116,9 +116,6 @@ final class Database
     }
 
     if(isset($result)){
-      // if(!isset($this->databaseSchema)) {
-      //   \mysqli_close($this->conn);
-      // }
       $this->access = false;
       return $result;
     }
@@ -132,7 +129,7 @@ final class Database
    * @param string|DatabaseSchema  $databaseSchema
    * @return void
    */
-  private function notFinished_modelDatabaseWithSchema($databaseSchema)
+  private function modelDatabaseWithSchema($databaseSchema)
   {
     if($databaseSchema instanceof DatabaseSchema) {
       $this->databaseSchema = $databaseSchema;
@@ -145,44 +142,24 @@ final class Database
   }
 
   /**
-   * Function that excecutes the function on the database, and casts the result into a DatabaseResult object.
-   * Can be called manualy however this is advised against.
+   * function that allows you to wrtie pure SQL to the database, use only if truly necisairy.
+   * because this will skip some of the optimization
    *
    * @param string $query
    * @return DatabaseResult
    */
   private function excecuteQuery(string $query)
   {
-    $result = \mysqli_query($this->conn, $query);
-
-    if(\mysqli_error($this->conn)){
-      throw new \Exception("Query invalid, here's what went wrong: " . \mysqli_error($this->conn));
+    $result = $this->conn->get_results($query, ARRAY_A);
+    
+    if(empty($result)){
+      $result = "query excecuted, result unknown";
+      $count = 0;
+    } else {
+      $count = count($result);
     }
-    $queryResult = '';
-    $numrows = 0;
 
-    //cast into a database result object
-    if(is_bool($result)){
-      if($result) {
-        $queryResult = "row(s) successfully added/altered";
-      }else{
-        $queryResult = "row(s) not added/altered";
-      }
-    }else {
-      $rows = [];
-  
-      if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-          array_push($rows, $row);
-        }
 
-        $queryResult = $rows;
-        $numrows = $result->num_rows;
-
-      } else {
-        $queryResult = "0 results";
-      }
-    }
-    return new DatabaseResult($queryResult, $numrows);
+    return new DatabaseResult($result, $count);
   }
 }

@@ -3,7 +3,7 @@
  * @package BMware DMK
  */
 
-namespace access;
+namespace dist;
 
 use \helpers\BaseQuery;
 use \helpers\IBaseQuery;
