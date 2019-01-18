@@ -5,7 +5,7 @@
 
 namespace config;
 
-use \access\Database;
+use \database\MySQLi;
 
 /**
  * class that takes care of setting up the database for later use
@@ -66,7 +66,7 @@ class DatabaseConfig
   {
     $this->connect(true);
     if (\mysqli_query($this->conn, "CREATE DATABASE IF NOT EXISTS $this->databaseName") != true) {
-        throw new \Exception("Error creating database: " . \mysqli_error($this->conn));
+        throw new \exceptions\InvalidQueryException("Error creating database: " . \mysqli_error($this->conn));
     } 
     \mysqli_close($this->conn);
     $this->connect();
@@ -106,11 +106,17 @@ class DatabaseConfig
     $config = new DatabaseConfig($conectionVariables["servername"], $conectionVariables["username"], $conectionVariables["password"]);
 
     if(isset($conectionVariables["useExistingDatabase"]) && $conectionVariables["useExistingDatabase"] == true && isset($conectionVariables["databaseName"])){
+      if($conectionVariables["databaseName"] === ""){
+        throw new \exceptions\InvalidDatabaseNameException("");
+      }
       $config->databaseName = $conectionVariables["databaseName"];
       $config->connect();
     }else {
       if(isset($conectionVariables["databaseName"]))
       {
+        if($conectionVariables["databaseName"] === ""){
+          throw new \exceptions\InvalidDatabaseNameException();
+        }
         $config->databaseName = $conectionVariables["databaseName"];
       }
       
@@ -118,6 +124,6 @@ class DatabaseConfig
       $config->createDatabase();
     }
 
-    return new Database($config);
+    return new MySQLi($config);
   }
 }

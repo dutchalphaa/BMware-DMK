@@ -10,7 +10,6 @@ there are currently 2 basic setup examples, the first is the normal db setup:
 require_once("vendor/autoload.php");
 
 use config\DatabaseConfig;
-use access\Query;
 
 $database = DatabaseConfig::create([
   "servername" => "localhost",
@@ -36,7 +35,6 @@ The second one is a WordPress based setup.
 require_once("vendor/autoload.php");
 
 use config\WordpressDatabaseConfig;
-use access\Query;
 
 $database = WordpressDatabaseConfig::create();
 ```
@@ -52,11 +50,13 @@ there are currently 4 query actions prebuild with this library:
 - create
 
 ```PHP
-use access\Query;
+use queries\CreateQuery;
 
 $database->define(function($context){
-  return Query::start("test")
-  ->insert(["selectors" => ["email"], "values" => ["boydvree@BMware.com"]])
+  return CreateQuery::create("test")
+  ->select("email", "location", "name")
+  ->values("boydvree@BMware.com", "Netherlands", "boyd")
+  ->values("someNoob@BMware.com", "noobland", "noob")
   ->endQuery();
 });
 ```
@@ -64,12 +64,15 @@ $database->define(function($context){
 - read
 
 ```PHP
-use access\Query;
+use queries\ReadQuery;
 
 $database->define(function($context){
-  return Query::start("test")
-  ->select(["selectors" => ["*"]])
-  ->where(["email" => "boydvree@BMware.com"])
+  return ReadQuery::create("test")
+  ->select()
+  ->whereEquals("email", "boydvree@BMware.com")
+  ->union()
+  ->select()
+  ->whereLessThan("email", "boydvre@BMware.com", true)
   ->endQuery();
 });
 ```
@@ -77,12 +80,13 @@ $database->define(function($context){
 - update
 
 ```PHP
-use access\Query;
+use queries\UpdateQuery;
 
 $database->define(function($context){
-  return Query::start("test")
-  ->update(["selectors" => ["name"], "values" => ["boyd"]])
-  ->where(["email" => "boydvree@BMware.com"])
+  return UpdateQuery::create("test")
+  ->select("email")
+  ->values("boydvree@BMware.com")
+  ->whereEquals("email", "boydvree@BMware.com", true)
   ->endQuery();
 });
 ```
@@ -90,40 +94,56 @@ $database->define(function($context){
 - delete
 
 ```PHP
-use access\Query;
+use queries\DeleteQuery;
 
 $database->define(function($context){
-  return Query::start("test")
-  ->remove()
-  ->where(["email" => "somerandomloser@notBMware.com"])
+  return DeleteQuery::create("test")
+  ->whereGreateThan("ID", "10")
   ->endQuery();
 });
 ```
 
-_note that delete is a reserved word in php so I used remove instead_
+each action has its own query object with its own modifiers.
 
-the actions you define require an array to work, and depending on the action
-will look for either of these 2 indexes:
+every object has the `create(string $table)` function wich sets the table and returns a instance of the given query object.
 
-- selectors: this defines the columns you want to target
-- values: this defines the value of the column provided
+every object has the `union(string $table = "")` function which if used creates a new instance of the given query object, and returns it. then on the end of the query, the bot of them will be put toghetter with a union. Will use the previous queries' table name if none is given
 
-`Query::start()` takes 1 argument:
+`CreateQuery`, `ReadQuery` and `DeleteQuery` have 3 "where" functions which are:
 
-- tableName: the name(s) of the tables in the transaction
+- `whereEquals(string $field, string $value, bool $notEquals = false)`: will add `"WHERE $field (!)= $value"` to the query
+- `whereGreaterThan(string $field, string $value, bool $orEqualTo = false)`: will add `"WHERE $field >(=) $value"` to the query
+- `whereLessThan(string $field, string $value, bool $orEqualTo = false)`: will add `"WHERE $field <(=) $value"` to the query
 
-`where()` takes in an array of key value pairs, where the key
-is the column name to check. and the value is the value to validate for that field.
+`ReadQuery` has a join function which takes in 3 arguments, to produce a join SQL statement
+
+- `string $table` the table to join to the right of the first table
+- `string $conditionOne` the first field to be used to join the 2 fields toghetter
+- `string $condtionTwo` the second field to be used to join the 2 fields toghetter
+
+the define function also accepts just the query as a argument
+
+```php
+$database->define(
+  ReadQuery::create("test")
+  ->select()
+  ->whereEquals("email", "boydvree@BMware.com")
+  ->union()
+  ->select()
+  ->whereLessThan("email", "boydvre@BMware.com", true)
+  ->endQuery()
+);
+```
 
 aditionally, a custom query can be made in the following way
 
 ```php
 $database->define(function($context){
-  $context("excecuteQuery", "SELECT * FROM `users`")
+  return $context("excecuteQuery", "SELECT * FROM `users`")
 });
 ```
 
-_note that when using the Query object you need to return it, but not when using a custom query_
+_note that when using the function method, the query needs to be returned_
 
 ---
 
@@ -165,17 +185,11 @@ $result->iterate(function($index, $row) use($someGlobalVariable){
 
 In my eyes, what makes this library "good" is that the query definitions are done in functions. meaning that you can let your programming spirit loose on it, and set up all kind of conditional checks on for example the schema. before the query is even excecuted this means that you can do just about everything before the query is excecuted.
 
-Also, something that i want to work on in the near future, Which probably wont be worked on in a while because that part of the lib wont be usefull for my work, is adding support for json structured queries. seeing as the calls are stored in a query object before even passing down to the decoder anyway. this will allow for sharing and/or making query templates. which in my eyes seems like an awesome feature.
-
 # Planning
 
-1. Join statements, support for join statements in the query object
-2. SchemaEngine, this wil cointain functionality like: create from existing database, update on migration and create alongside database
-3. Migration abstratction class, a class that will make migration calss easier. and excecuted without using the define function.
-4. Query abstraction class, similar to the migration abstraction class, but then from within the application and not from a script
-5. CLI tool, a cli tool to make migrations easier.
-6. Custom abstraction classes. allow users to easily make abstratction classes and hook them into the library
-7. Support for JSON query objects and abstract JSON query objects.
-8. Cacheing, flagged queries can be cached in (potentially) session to make repetative calls quicker
+1. SQL injection prevention, Automatically escape all the variables on the Query objects, to prevent any form of SQL injections
+2. Migration support, make migration a thing that is easy to do
+3. Schema support, make a standard schema definition that can be automatically transformed into a Create migration
+4. CLI tool, a cli tool to make migrations easier.
 
 any and all suggestions are welcome.

@@ -5,7 +5,7 @@
 
 namespace config;
 
-use \access\WordpressDatabase;
+use \database\WordpressDatabase;
 
 /**
  * class that sets up the database to use with wordpress
@@ -44,6 +44,6 @@ class WordpressDatabaseConfig
   {
     $config = new WordpressDatabaseConfig();
 
-    return new WordpressDatabase($config);
+    return new Wordpress($config);
   }
 }
