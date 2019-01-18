@@ -118,13 +118,17 @@ class DatabaseResult
    */
   public function getRowsByFieldValue(string $field, string $value)
   {
-    $this->iterate(function($index, $row) use(&$field, &$value){
+    $newModifiedRows = [];
+
+    $this->iterate(function($index, $row) use(&$field, &$value, &$newModifiedRows){
       foreach($row as $fieldName => $fieldValue){
         if($fieldName === $field && $fieldValue === $value) {
-          array_push($this->modifiedRows, $this->rows[$index]);
+          array_push($newModifiedRows, $row);
         }
       }  
     });
+
+    $this->modifiedRows = $newModifiedRows;
 
     return $this;
   }
@@ -137,13 +141,16 @@ class DatabaseResult
    */
   public function selectFields(string ...$fields)
   {
-    $this->iterate(function($index, $row) use(&$fields){
+    $newModifiedRows = [];
+
+    $this->iterate(function($index, $row) use(&$fields, &$newModifiedRows){
         foreach ($row as $field => $value) {
           if(in_array($field, $fields)){
-            $this->modifiedRows[$index][$field] = $value;
+            $newModifiedRows[$index][$field] = $value;
           }
         }
     });
+    $this->modifiedRows = $newModifiedRows;
 
     return $this;
   }
@@ -198,7 +205,6 @@ class DatabaseResult
   {
     if($this->useModified){
       $rows = $this->modifiedRows;
-      $this->modifiedRows = [];
     }else {
       $rows = $this->rows;
     }

@@ -3,7 +3,8 @@
 use PHPUnit\Framework\TestCase;
 use models\DatabaseResult;
 use config\DatabaseConfig;
-use dist\Query;
+use queries\ReadQuery;
+use queries\CreateQuery;
 
 class DatabaseResultTest extends TestCase
 {
@@ -30,55 +31,16 @@ class DatabaseResultTest extends TestCase
     });
 
     $this->database->define(function($context){
-      return Query::start("testing")
-      ->insert(["selectors" => [
-        "id",
-        "string_value_one", 
-        "string_value_two", 
-        "int_value_one"
-      ], "values" => [
-        "3",
-        "hello",
-        "world",
-        "21231"
-      ]])
-      ->endQuery();
-    });
-
-    $this->database->define(function($context){
-      return Query::start("testing")
-      ->insert(["selectors" => [
-        "id",
-        "string_value_one", 
-        "string_value_two", 
-        "int_value_one"
-      ], "values" => [
-        "2",
-        "hello",
-        "there",
-        "22"
-      ]])
-      ->endQuery();
-    });
-
-    $this->database->define(function($context){
-      return Query::start("testing")
-      ->insert(["selectors" => [
-        "id",
-        "string_value_one", 
-        "string_value_two", 
-        "int_value_one"
-      ], "values" => [
-        "1",
-        "goodbye",
-        "mister",
-        "12314234"
-      ]])
+      return CreateQuery::create("testing")
+      ->select("id", "string_value_one", "string_value_two", "int_value_one")
+      ->values("3", "hello", "world", "21231")
+      ->values("2", "hello", "there","22")
+      ->values("1", "goodbye", "mister", "12314234")
       ->endQuery();
     });
 
     $this->result = $this->database->define(function($context){
-      return Query::start("testing")
+      return ReadQuery::create("testing")
       ->select()
       ->endQuery();
     });
@@ -123,7 +85,68 @@ class DatabaseResultTest extends TestCase
    */
   public function selectFields_all_results_only_selected_fields()
   {
+    $result = $this->result;
+    $result->setUseModified(true);
 
+    $testResult = $result->selectFields("int_value_one")->getRows("modified");
+    $this->assertCount(3, $testResult);
+
+    $result->selectFields("int_value_one")->iterate(function($index, $row){
+      $this->assertArrayNotHasKey("string_value_one", $row);
+      $this->assertArrayNotHasKey("string_value_two", $row);
+      $this->assertArrayNotHasKey("id", $row);
+      $this->assertCount(1, $row);
+    });
+  }
+
+  /**
+   * @test
+   */
+  public function selectFields_and_getRowsByFieldValue_work_toghetter()
+  {
+    $result = $this->result;
+    $result->setUseModified(true);
+
+    $testResult = $result->getRowsByFieldValue("id", "1")->selectFields("id")->getRows("modified");
+    $this->assertCount(1, $testResult);
+
+    $result->getRowsByFieldValue("id", "1")->selectFields("id")->iterate(function($index, $row){
+      $this->assertArrayNotHasKey("string_value_one", $row);
+      $this->assertArrayNotHasKey("int_value_one", $row);
+      $this->assertArrayNotHasKey("string_value_two", $row);
+      $this->assertCount(1, $row);
+    });
+  }
+
+  /**
+   * @test
+   */
+  public function selectFields_and_getRowsByFieldValue_work_toghetter_reversed()
+  {
+    $result = $this->result;
+    $result->setUseModified(true);
+
+    $testResult = $result->selectFields("id")->getRowsByFieldValue("id", "1")->getRows("modified");
+    $this->assertCount(1, $testResult);
+
+    $result->selectFields("id")->getRowsByFieldValue("id", "1")->iterate(function($index, $row){
+      $this->assertArrayNotHasKey("string_value_one", $row);
+      $this->assertArrayNotHasKey("int_value_one", $row);
+      $this->assertArrayNotHasKey("string_value_two", $row);
+      $this->assertCount(1, $row);
+    });
+  }
+
+  /**
+   * @test
+   */
+  public function iterate_doesnt_break_method_chain()
+  {
+    $result = $this->result;
+    $result->setUseModified(true);
+
+    $testResult = $result->selectFields("id")->getRowsByFieldValue("id", "1")->iterate(function($index, $row){})->getRows("modified");
+    $this->assertCount(1, $testResult);
   }
 
   public function tearDown()

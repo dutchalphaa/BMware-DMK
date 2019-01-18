@@ -26,7 +26,7 @@ class ConfigTest extends TestCase
       $databaseNameOfInstance = $context("databaseName");
     });
 
-    $this->assertInstanceOf(\dist\Database::class, $database);
+    $this->assertInstanceOf(\database\MySQLi::class, $database);
     $this->assertEquals($databaseName, $databaseNameOfInstance);
   }
 
@@ -61,7 +61,7 @@ class ConfigTest extends TestCase
       $databaseNameOfInstance = $context("databaseName");
     });
 
-    $this->assertInstanceOf(\dist\Database::class, $database);
+    $this->assertInstanceOf(\database\MySQLi::class, $database);
     $this->assertEquals("bmbuilder_database", $databaseNameOfInstance);
   }
 
@@ -83,7 +83,7 @@ class ConfigTest extends TestCase
       $databaseNameOfInstance = $context("databaseName");
     });
 
-    $this->assertInstanceOf(\dist\Database::class, $database);
+    $this->assertInstanceOf(\database\MySQLi::class, $database);
     $this->assertEquals($databaseName, $databaseNameOfInstance);
   }
 

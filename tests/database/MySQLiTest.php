@@ -3,9 +3,9 @@
 use PHPUnit\Framework\TestCase;
 use models\DatabaseResult;
 use config\DatabaseConfig;
-use dist\Query;
+use queries\ReadQuery;
 
-class DatabaseTest extends TestCase
+class MySQLiTest extends TestCase
 {
   protected $database;
   protected $databaseName = "bmbuilder_testing";
@@ -47,7 +47,7 @@ class DatabaseTest extends TestCase
   public function database_returns_database_result_class()
   {
     $result = $this->database->define(function($context){
-      return Query::Start("user")
+      return ReadQuery::create("user")
       ->select()
       ->endQuery();
     });

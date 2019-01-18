@@ -169,13 +169,8 @@ Also, something that i want to work on in the near future, Which probably wont b
 
 # Planning
 
-1. Join statements, support for join statements in the query object
-2. SchemaEngine, this wil cointain functionality like: create from existing database, update on migration and create alongside database
-3. Migration abstratction class, a class that will make migration calss easier. and excecuted without using the define function.
-4. Query abstraction class, similar to the migration abstraction class, but then from within the application and not from a script
-5. CLI tool, a cli tool to make migrations easier.
-6. Custom abstraction classes. allow users to easily make abstratction classes and hook them into the library
-7. Support for JSON query objects and abstract JSON query objects.
-8. Cacheing, flagged queries can be cached in (potentially) session to make repetative calls quicker
+1. CLI tool, a cli tool to make migrations easier.
+2. Custom abstraction classes. allow users to easily make abstratction classes and hook them into the library
+3. Support for JSON query objects and abstract JSON query objects.
 
 any and all suggestions are welcome.

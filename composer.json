@@ -16,13 +16,14 @@
   "autoload": {
     "psr-4": {
       "config\\": "config/",
-      "dist\\": "dist/",
+      "database\\": "database/",
       "migration\\": "migration/",
       "models\\": "models/",
       "helpers\\": "helpers/",
       "cache\\": "cache/",
       "engines\\": "engines/",
-      "exceptions\\": "exceptions/"
+      "exceptions\\": "exceptions/",
+      "queries\\": "queries/"
     }
   },
   "require-dev": {
