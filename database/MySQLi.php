@@ -7,6 +7,7 @@ namespace database;
 
 use models\DatabaseResult;
 use config\DatabaseConfig;
+use helpers\BaseCrudQuery;
 use helpers\BaseDatabase;
 
 /**
@@ -39,13 +40,35 @@ final class MySQLi extends BaseDatabase
    * @param string $query
    * @return DatabaseResult
    */
-  protected function excecuteQuery(string $query)
+  protected function executeQuery($query)
   {
-    $result = \mysqli_query($this->conn, $query);
+    if(is_subclass_of($query, BaseCrudQuery::class) && count($query->getVariables()) > 0) {
+      $statement = $this->conn->prepare($query->getQuery());
+      $statement->bind_param($query->getPreparedTypes(), ...$query->getVariables());
+  
+      
+      if(!$statement->execute()){
+        throw new \exceptions\InvalidQueryException("Query invalid, here's what went wrong: " . mysqli_stmt_get_warnings($statement));
+      }
+  
+      $result = mysqli_stmt_get_result($statement);
+      $statement->close();
+    } else if(is_subclass_of($query, BaseCrudQuery::class) || is_string($query)) {
+      if(is_subclass_of($query, BaseCrudQuery::class)){
+        $query = $query->getQuery();
+      }
 
-    if(\mysqli_error($this->conn)){
-      throw new \exceptions\InvalidQueryException("Query invalid, here's what went wrong: " . \mysqli_error($this->conn));
+      $result = mysqli_query($this->conn, $query);
+
+      if(mysqli_error($this->conn)){
+        throw new \exceptions\InvalidQueryException("Query invalid, here's what went wrong: " . mysqli_error($this->conn));
+      }
+
+    } else {
+      throw new \InvalidArgumentException("This function expexts a string or one of the Query objects");
     }
+
+    
     $queryResult = '';
     $numrows = 0;
 

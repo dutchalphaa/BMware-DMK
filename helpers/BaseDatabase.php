@@ -60,8 +60,6 @@ abstract class BaseDatabase
     }
   }
 
-  //re-do parts of this function to make it compatible with the new type of querieng
-
   /**
    * function that gives the user access to the database using the Query/Migration object,
    * or alternatively, create a custom query with the excecuteQuery function
@@ -77,7 +75,7 @@ abstract class BaseDatabase
     if(is_callable($definition)){
       $query = $definition(array($this, "getAccess"));
     } else if(is_subclass_of($definition, BaseCrudQuery::class)) {
-      return $this->excecuteQuery($definition->getQuery());
+      return $this->executeQuery($definition);
     }
 
     if(!isset($query)) {
@@ -85,7 +83,7 @@ abstract class BaseDatabase
     } else if($query instanceof DatabaseResult) {
       return $query;
     } else if(is_subclass_of($query, BaseCrudQuery::class)){
-      $result = $this->excecuteQuery($query->getQuery());
+      $result = $this->executeQuery($query);
     } else if ($query instanceof Migration) {
       //do nothing yet
     } else if ($query instanceof DatabaseSchema){
@@ -100,6 +98,17 @@ abstract class BaseDatabase
     }
     $this->access = false;
     return $this;
+  }
+
+  protected function prepareStatement($query)
+  {
+    if(!is_subclass_of($query, BaseCrudQuery::Class)){
+      return;
+    }
+
+    
+
+    return $query;
   }
 
   /**
@@ -121,5 +130,5 @@ abstract class BaseDatabase
     //migration logics here
   }
 
-  abstract protected function excecuteQuery(string $query);
+  abstract protected function executeQuery(string $query);
 }
