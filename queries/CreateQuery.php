@@ -35,23 +35,33 @@ class CreateQuery extends BaseCrudQuery
     return $this;
   }
 
-  public function values(string $value, string ...$values)
+  public function values($value, ...$values)
   {
+    $this->isStringIntDouble($value, ...$values);
+
     if(!isset($this->components["values"])){
       $this->components["values"] = [];
     }
 
     if(empty($values)){
-      array_push($this->components["values"], "( '$value' )");
+      array_push($this->variables, $value);
+      $this->preparedTypes .= $this->returnTypeStringIntDouble($value);
+      array_push($this->components["values"], "( ? )");
       return $this;
     }
     
+    array_push($this->variables, $value);
+    $this->preparedTypes .= $this->returnTypeStringIntDouble($value);
+    $value = "?";
+
     $extraValues = "";
     foreach ($values as $val) {
-      $extraValues .= ", '$val'";
+      array_push($this->variables, $val);
+      $this->preparedTypes .= $this->returnTypeStringIntDouble($val);
+      $extraValues .= ", ?";
     }
-
-    $value = "'$value'$extraValues";
+  
+    $value .= $extraValues;
     array_push($this->components["values"], "( $value )");
     return $this;
   }

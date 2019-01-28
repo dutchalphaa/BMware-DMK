@@ -5,7 +5,7 @@
 
 namespace config;
 
-use \database\WordpressDatabase;
+use \database\Wordpress;
 
 /**
  * class that sets up the database to use with wordpress

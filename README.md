@@ -104,6 +104,7 @@ $database->define(function($context){
 ```
 
 each action has its own query object with its own modifiers.
+all insert and where statements will automatically be turned into prepared statements.
 
 every object has the `create(string $table)` function wich sets the table and returns a instance of the given query object.
 

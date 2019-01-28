@@ -8,6 +8,7 @@ namespace database;
 use config\WordpressDatabaseConfig;
 use models\DatabaseResult;
 use helpers\BaseDatabase;
+use helpers\BaseCrudQuery;
 
 /**
  * class that uses the wordpress wpdb class to make calls to the database
@@ -39,9 +40,39 @@ final class Wordpress extends BaseDatabase
    * @param string $query
    * @return DatabaseResult
    */
-  private function excecuteQuery(string $query)
+  protected function executeQuery($query)
   {
-    $result = $this->conn->get_results($query, ARRAY_A);
+    if(!is_subclass_of($query, BaseCrudQuery::class)){
+      throw new exceptions\InvalidQueryArgument("Expected a Query object");
+    }
+
+    if(count($query->getVariables()) > 0){
+      $count = 1;
+      $preparedTypes = str_split($query->getPreparedTypes());
+      $queryString = $query->getQuery();
+  
+      foreach ($preparedTypes as $char) {
+        if($char == "i"){
+          $char = str_replace("i", "%d", $char);
+        } else if ($char == "s") {
+          $char = str_replace("s", "%s", $char);
+        } else if ($char == "d") {
+          $char = str_replace("d", "%f", $char);
+        }
+  
+        $pos = strpos($queryString, "?");
+        if ($pos !== false) {
+          $queryString = substr_replace($queryString, $char, $pos, 1);
+        }
+      }
+  
+      $result = $this->conn->get_results($this->conn->prepare(
+        $queryString,
+        ...$query->getVariables()
+      ), ARRAY_A);
+    } else {
+      $result = $this->conn->get_results($query->getQuery(), ARRAY_A);
+    }
     
     if(empty($result)){
       $result = "query excecuted, result unknown";
@@ -50,7 +81,8 @@ final class Wordpress extends BaseDatabase
       $count = count($result);
     }
 
-
+    var_dump($result);
+    die();
     return new DatabaseResult($result, $count);
   }
 }
