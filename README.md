@@ -188,9 +188,8 @@ In my eyes, what makes this library "good" is that the query definitions are don
 
 # Planning
 
-1. SQL injection prevention, Automatically escape all the variables on the Query objects, to prevent any form of SQL injections
-2. Migration support, make migration a thing that is easy to do
-3. Schema support, make a standard schema definition that can be automatically transformed into a Create migration
-4. CLI tool, a cli tool to make migrations easier.
+1. Migration support, make migration a thing that is easy to do
+2. Schema support, make a standard schema definition that can be automatically transformed into a Create migration
+3. CLI tool, a cli tool to make migrations easier.
 
 any and all suggestions are welcome.
