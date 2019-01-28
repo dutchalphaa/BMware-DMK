@@ -42,6 +42,7 @@ final class MySQLi extends BaseDatabase
    */
   protected function executeQuery($query)
   {
+    //checks if the query extends BaseCrudQuery class and has the variables for prepared statements set
     if(is_subclass_of($query, BaseCrudQuery::class) && count($query->getVariables()) > 0) {
       $statement = $this->conn->prepare($query->getQuery());
       $statement->bind_param($query->getPreparedTypes(), ...$query->getVariables());
