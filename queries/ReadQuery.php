@@ -73,7 +73,7 @@ class ReadQuery extends BaseCrudQuery
     $this->query = implode(" ", $this->components);
     
     $this->createUnionQuery();
-
+    
     static::$lastQuery = $this; 
     return $this;
   }
