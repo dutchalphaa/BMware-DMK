@@ -1,9 +1,8 @@
 {
-  "version": "v2.0.0",
   "name": "bmware/dmk",
   "description": "MySQLi database toolkit",
   "type": "package",
-  "license": "GPL-3.0",
+  "license": "GPL-3.0-or-later",
   "authors": [
     {
       "name": "Boyd",
