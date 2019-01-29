@@ -2,6 +2,7 @@
 
 - made DatabaseResult iterable
 - deprecated Iterate function
+- fixed an issue where you cou couldn't execute a direct query on the wordpress database
 
 ## --version v2.0.2
 
