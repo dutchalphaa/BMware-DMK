@@ -81,8 +81,6 @@ final class Wordpress extends BaseDatabase
       $count = count($result);
     }
 
-    var_dump($result);
-    die();
     return new DatabaseResult($result, $count);
   }
 }

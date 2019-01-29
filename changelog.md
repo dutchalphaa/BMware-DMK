@@ -1,4 +1,9 @@
-## --version v2.0
+## --version v2.1.0
+
+- made DatabaseResult iterable
+- deprecated Iterate function
+
+## --version v2.0.2
 
 - added DatabaseConfig unit tests
 - added Database unit tests

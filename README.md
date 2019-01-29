@@ -159,11 +159,9 @@ $result->setUseModified(true) //tell the object to use the modifiedRow as the ba
 
 $result->getRowsByFieldValue("email", "hello@world.code")->selectFields("id")->getRows("modified"); // you can chain as many as you want toghetter however some might clash with eachother
 
-$result->iterate(function($index, $row) use($someGlobalVariable){
-  //this function here will be excecuted on all array items,
-  //if the second variable is set, this function will be called on all values
-  //the use() is used to bind $someGlobalVariable to the function scope this is completely optional
-})->getRows("modified");
+foreach(DatbaseResult $result as $row){
+  //excecute function here
+}
 ```
 
 `$result->setUseModified(boolean $value)` sets the `$result->useModified` variable to the value of `$value`, which will make all modifier functions use the `$result->modifiedRows` as the base point for the function
@@ -177,8 +175,6 @@ $result->iterate(function($index, $row) use($someGlobalVariable){
 `$result->selectfields(string ...$fields)` returns only the fields specified in this function
 
 `$result->getRows(string $flag)` depending on the value of `$flag` returns either the previous modified rows, base rows or current modified rows, the flags are: `"previous"` for the previous modified rows or `"modified"` for the current modified rows, anything else will just return the queries base result
-
-`$result->iterate(callable $function, bool $recursive)` calls the `$function` on every row, or value depending on the value of `$recursive`. use `use($someGlobalVariable)` to bind a global variable to the function scope, use `use(&$someGlobalVariable)` to bind a global variable to the function scope and actually alter the variable
 
 ---
 

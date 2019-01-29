@@ -8,7 +8,7 @@ namespace models;
 /**
  * class that holds the results for a query, and some access modifiers
  */
-class DatabaseResult
+class DatabaseResult implements \IteratorAggregate
 {
   /**
    * variable that holds the amount of rows returned by the query
@@ -194,8 +194,17 @@ class DatabaseResult
     return null;
   }
 
+  public function getIterator()
+  {
+    if($this->useModified){
+      return new \ArrayIterator($this->modifiedRows);
+    } else {
+      return new \ArrayIterator($this->rows);
+    }
+  }
+
   /**
-   * iterates over the rows and calls a function on all of the rows, or on all of the values if $recursive = true
+   * Deprecated: iterates over the rows and calls a function on all of the rows, or on all of the values if $recursive = true
    *
    * @param   callable $function
    * @param   boolean $recursive
