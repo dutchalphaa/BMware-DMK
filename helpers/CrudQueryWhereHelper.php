@@ -14,7 +14,7 @@ trait CrudQueryWhereHelper
     $this->preparedTypes .= $this->returnTypeStringIntDouble($value);
 
     $firstWhere = false;
-    $field = $this->encloseBackticks($field);
+    $this->encloseBackticks($field);
     $value = "'$value'";
     ($notEquals) ? $condition = "!=" : $condition = "=";
     
@@ -37,7 +37,7 @@ trait CrudQueryWhereHelper
     $firstWhere = false;
     $condition = ">";
     ($orEqualTo) ? $condition .= "=" : false;
-    $field = $this->encloseBackticks($field);
+    $this->encloseBackticks($field);
     $value = "'$value'";
     
     if(!isset($this->components["where"])){
@@ -59,7 +59,7 @@ trait CrudQueryWhereHelper
     $firstWhere = false;
     $condition = "<";
     ($orEqualTo) ? $condition .= "=" : false;
-    $field = $this->encloseBackticks($field);
+    $this->encloseBackticks($field);
     $value = "'$value'";
     
     if(!isset($this->components["where"])){

@@ -53,19 +53,21 @@ class UpdateQuery extends BaseCrudQuery
   public function endQuery(bool $condition = false)
   {
     if(!is_array($this->selectors) && !is_array($this->values)){
-      $this->selectors = $this->encloseBackticks($this->selectors);
+      $this->encloseBackticks($this->selectors);
       $this->values = "'$this->values'";
       $this->components["selectors"] = "$this->selectors = $this->values";
     } else if (count($this->selectors) !== count($this->values)){
       throw new \Exception("cannot have more selectors then values or the other way around");
     } else {
-
-      $selector = $this->encloseBackticks($this->selectors[0]);
+      
+      $this->encloseBackticks($this->selectors[0]);
+      $selector = $this->selectors[0];
       $value = "'" . $this->values[0] . "'";
 
       $setClause = "$selector = $value";
       for ($i=1; $i < count($this->selectors); $i++) { 
-        $select = $this->encloseBackticks($this->selectors[$i]);
+        $this->encloseBackticks($this->selectors[$i]);
+        $select = $this->selectors[$i];
         $val = "'" . $this->values[$i] . "'";
 
         $setClause .= ", $select = $val";

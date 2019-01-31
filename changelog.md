@@ -1,8 +1,19 @@
 ## --version v2.1.0
 
-- made DatabaseResult iterable
-- deprecated Iterate function
+- added IteratorAggregate interface to DatabaseResult
+- added the getItterator function to DatabaseResult
+- added join statements to DeleteQeury
+- added BaseCrudMigration
+- added CreateMigration
+- added UpdateMigration
+- added DeleteMigration
+- added CrudSQLHelper trait to BaseCrudQuery
+- changed the DatabaseResult function to use foreach instead of iterate
+- changed `$table` to protected
+- changed encloseBackticks to directly modify the variable instead of spitting out a new one
 - fixed an issue where you cou couldn't execute a direct query on the wordpress database
+- moved parts of the BaseCrudQuery to the CrudSQLHelper trait.
+- deprecated Iterate function
 
 ## --version v2.0.2
 

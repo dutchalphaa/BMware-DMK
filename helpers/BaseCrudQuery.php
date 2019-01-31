@@ -7,33 +7,12 @@ namespace helpers;
 
 abstract class BaseCrudQuery
 {
-  public $table;
+  use CrudSQLHelper;
 
   protected $preparedTypes = "";
-  protected $components = [];
   protected $variables = [];
-  protected $query;
   
   protected static $unionQueries = [];
-  protected static $lastQuery;
-
-  public static function getLastQuery()
-  {
-    return static::$lastQuery;
-  }
-
-  public static function create(string $table)
-  {
-    $query = new static();
-    $query->table = $query->encloseBackticks($table);
-
-    return $query;
-  }
-
-  public function getQuery()
-  {
-    return $this->query;
-  }
 
   public function getVariables()
   {
@@ -49,12 +28,11 @@ abstract class BaseCrudQuery
   {
     $unionQuery = new static();
     
-    if($table === ""){
-      $unionQuery->table = $this->table;
-    } else {
-      $unionQuery->table = $this->encloseBackticks($table);
+    if($table !== ""){
+      $this->encloseBackticks($table);
     }
-
+    
+    $unionQuery->table = $table;
 
     if(!isset($this->query)){
       $this->endQuery();
@@ -64,7 +42,7 @@ abstract class BaseCrudQuery
     return $unionQuery;
   }
 
-  public function encloseBackticks(string $field)
+  public function encloseBackticks(string &$field)
   {
     $fieldExp = explode(".", $field);
     if(isset($fieldExp[1])){
@@ -75,8 +53,6 @@ abstract class BaseCrudQuery
     } else {
       $field = "`$field`";
     }
-
-    return $field;
   }
 
   protected function createUnionQuery()

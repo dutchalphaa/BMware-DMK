@@ -120,15 +120,16 @@ class DatabaseResult implements \IteratorAggregate
   {
     $newModifiedRows = [];
 
-    $this->iterate(function($index, $row) use(&$field, &$value, &$newModifiedRows){
-      foreach($row as $fieldName => $fieldValue){
-        if($fieldName === $field && $fieldValue === $value) {
-          array_push($newModifiedRows, $row);
+    foreach($this as $result){
+      foreach ($result as $fieldName => $fieldValue) {
+        if($fieldName === $field && $fieldValue === $value){
+          array_push($newModifiedRows, $result);
         }
-      }  
-    });
+      }
+    }
 
     $this->modifiedRows = $newModifiedRows;
+    var_dump($this->modifiedRows);
 
     return $this;
   }
@@ -143,13 +144,14 @@ class DatabaseResult implements \IteratorAggregate
   {
     $newModifiedRows = [];
 
-    $this->iterate(function($index, $row) use(&$fields, &$newModifiedRows){
-        foreach ($row as $field => $value) {
-          if(in_array($field, $fields)){
-            $newModifiedRows[$index][$field] = $value;
-          }
+    foreach ($this as $index => $row) {
+      foreach ($row as $field => $value) {
+        if(in_array($field, $fields)){
+          $newModifiedRows[$index][$field] = $value;
         }
-    });
+      }
+    }
+
     $this->modifiedRows = $newModifiedRows;
 
     return $this;

@@ -23,7 +23,7 @@ class ReadQuery extends BaseCrudQuery
 
       return $this;
     }
-    $selector = $this->encloseBackticks($selector);
+    $this->encloseBackticks($selector);
     if(empty($selectors)){
       $this->components["selectors"] = "SELECT $selector FROM $this->table";
 
@@ -32,7 +32,7 @@ class ReadQuery extends BaseCrudQuery
     $extraSelectors = "";
 
     foreach ($selectors as $select) {
-      $select = $this->encloseBackticks($select);
+      $this->encloseBackticks($select);
       $extraSelectors .= ", $select";
     }
 
@@ -48,10 +48,10 @@ class ReadQuery extends BaseCrudQuery
       $this->components["join"] = [];
     }
 
-    $table = $this->encloseBackticks($table);
+    $this->encloseBackticks($table);
     ($outer) ? $joinType = "OUTER" : $joinType = "INNER";
-    $conditionFirstTable = $this->encloseBackticks($conditionFirstTable);
-    $conditionSecondTable = $this->encloseBackticks($conditionSecondTable);
+    $this->encloseBackticks($conditionFirstTable);
+    $this->encloseBackticks($conditionSecondTable);
 
     array_push($this->components["join"], "LEFT $joinType JOIN $table ON $conditionFirstTable = $conditionSecondTable");
 

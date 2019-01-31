@@ -15,7 +15,7 @@ class CreateQuery extends BaseCrudQuery
       throw new \exceptions\InvalidQueryException("Invalid argument, selector cannot be an empty string");
     }
 
-    $selector = $this->encloseBackticks($selector);
+    $this->encloseBackticks($selector);
     if(empty($selectors)){
       $this->components["selectors"] = "INSERT INTO $this->table ( $selector ) VALUES";
       
@@ -25,7 +25,7 @@ class CreateQuery extends BaseCrudQuery
     $extraSelectors = "";
 
     foreach($selectors as $select){
-      $select = $this->encloseBackticks($select);
+      $this->encloseBackticks($select);
       $extraSelectors .= ", $select";
     }
 
