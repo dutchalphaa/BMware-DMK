@@ -5,10 +5,10 @@
 
 namespace database;
 
-use config\WordpressDatabaseConfig;
+use mysql\Config;
 use models\DatabaseResult;
 use helpers\BaseDatabase;
-use helpers\BaseCrudQuery;
+use helpers\BaseCrudSQL;
 
 /**
  * class that uses the wordpress wpdb class to make calls to the database
@@ -25,12 +25,12 @@ final class Wordpress extends BaseDatabase
   /**
    * initialize some variable for the database object
    *
-   * @param   WordpressDatabaseConfig  $config - holds all the config options for the database object
+   * @param   Config  $config - holds all the config options for the database object
    */
-  public function __construct(WordpressDatabaseConfig $config)
+  public function __construct(Config $config)
   {
-    $this->conn = $config->conn;
-    $this->prefix = $config->prefix;
+    $this->conn = $config->getConn();
+    $this->prefix = $config->getPrefix();
   }
 
   /**
@@ -42,7 +42,7 @@ final class Wordpress extends BaseDatabase
    */
   protected function executeQuery($query)
   {
-    if(is_subclass_of($query, BaseCrudQuery::class) && count($query->getVariables()) > 0){
+    if(is_subclass_of($query, BaseCrudSQL::class) && count($query->getVariables()) > 0){
       $count = 1;
       $preparedTypes = str_split($query->getPreparedTypes());
       $queryString = $query->getQuery();
@@ -67,7 +67,7 @@ final class Wordpress extends BaseDatabase
         ...$query->getVariables()
       ), ARRAY_A);
     } else {
-      if(is_subclass_of($query, BaseCrudQuery::class)){
+      if(is_subclass_of($query, BaseCrudSQL::class)){
         $result = $this->conn->get_results($query->getQuery(), ARRAY_A);
       } else {
         $result = $this->conn->get_results($query, ARRAY_A);

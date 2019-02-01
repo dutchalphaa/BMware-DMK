@@ -1,4 +1,4 @@
-## --version v2.1.0
+## --version v3.0.0
 
 - added IteratorAggregate interface to DatabaseResult
 - added the getItterator function to DatabaseResult
@@ -7,13 +7,22 @@
 - added CreateMigration
 - added UpdateMigration
 - added DeleteMigration
-- added CrudSQLHelper trait to BaseCrudQuery
-- changed the DatabaseResult function to use foreach instead of iterate
+- added BaseCrudSQL
+- added new config class that uses method chaining to create the database and/or connection
+- added Schema class
+- added Schema manger class
+- changed the DatabaseResult function to use foreach instead of the iterate function
 - changed `$table` to protected
 - changed encloseBackticks to directly modify the variable instead of spitting out a new one
+- changed define to now also work with migrations
+- changed the define function to have less code
+- changed parts of wordpress and mysqli classes to work with config
 - fixed an issue where you cou couldn't execute a direct query on the wordpress database
-- moved parts of the BaseCrudQuery to the CrudSQLHelper trait.
-- deprecated Iterate function
+- removed config folder
+- moved Config => mysql folder
+- moved migrations folder => mysql folder
+- moved queries folder => mysql folder
+- moved parts of the BaseCrudQuery to the BaseCrudSQL class.
 
 ## --version v2.0.2
 
@@ -30,7 +39,7 @@
 - added changelog.md
 - added join support for ReadQuery
 - added union support for all queries
-- added the option to only pass in the query to define
+- added the option to only pass in the queryobject to the define function
 - added support for Wordpress prepared statements
 - added support for MySQLi prepared statements
 - changed the README.md to be up to date with the latest changes

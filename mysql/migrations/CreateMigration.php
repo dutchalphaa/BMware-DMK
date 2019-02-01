@@ -3,7 +3,7 @@
  * @package BMware DMK
  */
 
-namespace migrations;
+namespace mysql\migrations;
 
 use helpers\BaseCrudMigration;
 

@@ -10,20 +10,20 @@
     }
   ],
   "require": {
-    "php": ">=7"
+    "php": ">=7",
+    "symfony/yaml": "^4.2"
   },
   "autoload": {
     "psr-4": {
       "config\\": "config/",
       "database\\": "database/",
-      "migration\\": "migration/",
+      "mysql\\": "mysql/",
       "models\\": "models/",
       "helpers\\": "helpers/",
       "cache\\": "cache/",
       "engines\\": "engines/",
       "exceptions\\": "exceptions/",
-      "queries\\": "queries/",
-      "migrations\\": "migrations/"
+      "schema\\": "schema/"
     }
   },
   "require-dev": {

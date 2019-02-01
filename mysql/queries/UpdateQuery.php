@@ -3,7 +3,7 @@
  * @package BMware DMK
  */
 
-namespace queries;
+namespace mysql\queries;
 
 use helpers\BaseCrudQuery;
 use helpers\CrudQueryWhereHelper;

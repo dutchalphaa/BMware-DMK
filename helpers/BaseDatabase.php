@@ -5,22 +5,18 @@
 
 namespace helpers;
 
-use models\DatabaseSchema;
 use models\DatabaseResult;
-use queries\CreateQuery;
-use queries\ReadQuery;
-use queries\UpdateQuery;
-use queries\DeleteQuery;
-
+use models\Schema;
+use schema\SchemaManager;
 
 abstract class BaseDatabase
 {
   /**
    * holds the schema object of the database
    *
-   * @var DatabaseSchema
+   * @var Schema
    */
-  protected $databaseSchema;
+  protected $schema;
   /**
    * variable that holds the connection to a database
    *
@@ -33,6 +29,7 @@ abstract class BaseDatabase
    * @var boolean
    */
   protected $access = false;
+  protected $databaseName;
 
   /**
    * function that allows you to call certain private methods and properties within define function,
@@ -64,7 +61,7 @@ abstract class BaseDatabase
    * function that gives the user access to the database using the Query/Migration object,
    * or alternatively, create a custom query with the excecuteQuery function
    *
-   * @param   callable  $definition - custom function that either returns a Query/Migration object,
+   * @param   any  $definition - custom function that either returns a Query/Migration object,
    * or null if a custom query is excecuted
    * @return  any
    */
@@ -75,59 +72,43 @@ abstract class BaseDatabase
     if(is_callable($definition)){
       $query = $definition(array($this, "getAccess"));
     } else if(is_subclass_of($definition, BaseCrudQuery::class)) {
+      $this->access = false;
       return $this->executeQuery($definition);
     }
 
-    if(!isset($query)) {
-      //do nothing
-    } else if($query instanceof DatabaseResult) {
+    $this->access = false;
+
+    if($query instanceof DatabaseResult) {
       return $query;
     } else if(is_subclass_of($query, BaseCrudQuery::class)){
-      $result = $this->executeQuery($query);
-    } else if ($query instanceof Migration) {
-      //do nothing yet
-    } else if ($query instanceof DatabaseSchema){
-      //do nothing yet
+      return $this->executeQuery($query);
+    } else if(!isset($query)) {
+      return $this;
     } else {
       throw new \exceptions\InvalidDefineReturnType();
     }
-
-    if(isset($result)){
-      $this->access = false;
-      return $result;
-    }
-    $this->access = false;
-    return $this;
   }
 
-  protected function prepareStatement($query)
+  public function useSchema(string $pathToFile = "")
   {
-    if(!is_subclass_of($query, BaseCrudQuery::Class)){
-      return;
-    }
+    $schemaManager = new SchemaManager($this);
 
-    
-
-    return $query;
-  }
-
-  /**
-   * function that adds the database schema to the database object
-   *
-   * @param string|DatabaseSchema  $databaseSchema
-   * @return void
-   */
-  protected function notFinished_modelDatabaseWithSchema($databaseSchema)
-  {
-    if($databaseSchema instanceof DatabaseSchema) {
-      $this->databaseSchema = $databaseSchema;
-    } else if(is_string($databaseSchema)) {
-      $this->databaseSchema = SchemaEngine::createSchemaWithXmlFile($databaseSchema, $this->databaseName);
+    if($pathToFile === ""){
+      $schemaManager->createSchema($this->databaseName);
     } else {
-      //make custom expception once this gets implemented
-      throw new \Exception("this function expects a xml schema file location or a schema object");
+      $schemaManager->loadSchema($pathToFile, $this->databaseName);
     }
-    //migration logics here
+
+    $this->schema = $schemaManager->getNewSchema();
+    if(!$this->access){
+      return $this;  
+    }
+  }
+
+  public function getSchema()
+  {
+    var_dump($this->schema);
+    return $this;
   }
 
   abstract protected function executeQuery(string $query);

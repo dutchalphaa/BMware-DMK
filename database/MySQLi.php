@@ -6,8 +6,8 @@
 namespace database;
 
 use models\DatabaseResult;
-use config\DatabaseConfig;
-use helpers\BaseCrudQuery;
+use mysql\Config;
+use helpers\BaseCrudSQL;
 use helpers\BaseDatabase;
 
 /**
@@ -16,21 +16,14 @@ use helpers\BaseDatabase;
 final class MySQLi extends BaseDatabase
 {
   /**
-   * holds the name of the database
-   *
-   * @var string
-   */
-  protected $databaseName;
-
-  /**
    * initialize some variable for the database object
    *
-   * @param   DatabaseConfig  $config - holds all the config options for the database object
+   * @param   Config  $config - holds all the config options for the database object
    */
-  public function __construct(DatabaseConfig $config)
+  public function __construct(Config $config)
   {
-    $this->conn = $config->conn;
-    $this->databaseName = $config->databaseName;
+    $this->conn = $config->getConn();
+    $this->databaseName = $config->getDatabaseName();
   }
 
   /**
@@ -43,7 +36,7 @@ final class MySQLi extends BaseDatabase
   protected function executeQuery($query)
   {
     //checks if the query extends BaseCrudQuery class and has the variables for prepared statements set
-    if(is_subclass_of($query, BaseCrudQuery::class) && count($query->getVariables()) > 0) {
+    if(is_subclass_of($query, BaseCrudSQL::class) && count($query->getVariables()) > 0) {
       $statement = $this->conn->prepare($query->getQuery());
       $statement->bind_param($query->getPreparedTypes(), ...$query->getVariables());
   
@@ -54,8 +47,8 @@ final class MySQLi extends BaseDatabase
   
       $result = mysqli_stmt_get_result($statement);
       $statement->close();
-    } else if(is_subclass_of($query, BaseCrudQuery::class) || is_string($query)) {
-      if(is_subclass_of($query, BaseCrudQuery::class)){
+    } else if(is_subclass_of($query, BaseCrudSQL::class) || is_string($query)) {
+      if(is_subclass_of($query, BaseCrudSQL::class)){
         $query = $query->getQuery();
       }
 

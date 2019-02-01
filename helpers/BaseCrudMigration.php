@@ -5,10 +5,8 @@
 
 namespace helpers;
 
-abstract class BaseCrudMigration
+abstract class BaseCrudMigration extends BaseCrudSQL
 {
-  use CrudSQLHelper;
-
   protected $flag;
 
   abstract public function endQuery();

@@ -5,10 +5,8 @@
 
 namespace helpers;
 
-abstract class BaseCrudQuery
+abstract class BaseCrudQuery extends BaseCrudSQL
 {
-  use CrudSQLHelper;
-
   protected $preparedTypes = "";
   protected $variables = [];
   

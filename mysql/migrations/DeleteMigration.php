@@ -3,7 +3,7 @@
  * @package BMware DMK
  */
 
-namespace migrations;
+namespace mysql\migrations;
 
 use helpers\BaseCrudMigration;
 
@@ -56,7 +56,6 @@ class DeleteMigration extends BaseCrudMigration
 
     $this->query = implode(" ", $this->components);
 
-    var_dump($this);
     static::$lastQuery = $this;
     return $this;
   }

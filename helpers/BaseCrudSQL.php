@@ -8,7 +8,7 @@ namespace helpers;
 /**
  * 
  */
-trait CrudSQLHelper
+class BaseCrudSQL
 {
   protected $components = [];
   protected $table;

@@ -204,36 +204,4 @@ class DatabaseResult implements \IteratorAggregate
       return new \ArrayIterator($this->rows);
     }
   }
-
-  /**
-   * Deprecated: iterates over the rows and calls a function on all of the rows, or on all of the values if $recursive = true
-   *
-   * @param   callable $function
-   * @param   boolean $recursive
-   * @return  void
-   */
-  public function iterate(callable $function, bool $recursive = false)
-  {
-    if($this->useModified){
-      $rows = $this->modifiedRows;
-    }else {
-      $rows = $this->rows;
-    }
-
-    if(isset($this->result)){
-      $function($this->result);
-    } else {
-      foreach($rows as $index => $row){
-        if($recursive){
-          foreach($row as $key => $value){
-            $function($key, $value);
-          }
-        }else {
-          $function($index, $row);
-        }
-      }
-    }
-    
-    return $this; 
-  }
 }
