@@ -42,11 +42,7 @@ final class Wordpress extends BaseDatabase
    */
   protected function executeQuery($query)
   {
-    if(!is_subclass_of($query, BaseCrudQuery::class)){
-      throw new exceptions\InvalidQueryArgument("Expected a Query object");
-    }
-
-    if(count($query->getVariables()) > 0){
+    if(is_subclass_of($query, BaseCrudQuery::class) && count($query->getVariables()) > 0){
       $count = 1;
       $preparedTypes = str_split($query->getPreparedTypes());
       $queryString = $query->getQuery();
@@ -71,7 +67,13 @@ final class Wordpress extends BaseDatabase
         ...$query->getVariables()
       ), ARRAY_A);
     } else {
-      $result = $this->conn->get_results($query->getQuery(), ARRAY_A);
+      if(is_subclass_of($query, BaseCrudQuery::class)){
+        $result = $this->conn->get_results($query->getQuery(), ARRAY_A);
+      } else if(is_string($query)) {
+        $result = $this->conn->get_results($query, ARRAY_A);
+      } else {
+        throw new \Exception();
+      }
     }
     
     if(empty($result)){
